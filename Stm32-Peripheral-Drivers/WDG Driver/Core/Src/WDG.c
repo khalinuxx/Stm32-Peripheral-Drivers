@@ -1,0 +1,143 @@
+
+/**
+  ******************************************************************************
+  * @file    WDG.c
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Source file of WhatchDoG LL Driver.
+  * Created on: 10 Aug. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services, R&D Team.
+  * All rights reserved.
+  ******************************************************************************
+  */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include"WDG.h"
+
+
+
+
+/**
+  * @brief  Initialize the Independent watchdog.
+  * @param  IWDGx the independent Whatchdog instance .
+  * @param  Counter Value between Min_Data=0 and Max_Data=0x0FFF.
+  * @param  Prescaler This parameter can be one of the following values:
+  *         @arg @ref LL_IWDG_PRESCALER_4
+  *         @arg @ref LL_IWDG_PRESCALER_8
+  *         @arg @ref LL_IWDG_PRESCALER_16
+  *         @arg @ref LL_IWDG_PRESCALER_32
+  *         @arg @ref LL_IWDG_PRESCALER_64
+  *         @arg @ref LL_IWDG_PRESCALER_128
+  *         @arg @ref LL_IWDG_PRESCALER_256
+  * @Note To calculate the right counter to get the required TimeOut follow the next equation
+  *
+  *               LSI Clock x TimeOut
+  * Counetr = ------------------------- - 1 ;
+  *             4 x 1000 x 2^(div_rank)
+  *
+  * TimeOut the required time
+  * LSI Clock = 32000 in the stm32f407 board
+  * div_rank This parameter depand on WWDG Prescaler it can be one of the following values:
+  *         0 for  LL_IWDG_PRESCALER_4
+  *         1 for  LL_IWDG_PRESCALER_8
+  *         2 for  LL_IWDG_PRESCALER_16
+  *         3 for  LL_IWDG_PRESCALER_32
+  *         4 for  LL_IWDG_PRESCALER_64
+  *         5 for  LL_IWDG_PRESCALER_128
+  *         6 for  LL_IWDG_PRESCALER_256
+  *
+  * [0                                        TimeOut]//////////////////////////
+  * ---------------------------------------------------------------------------
+  *
+  * @retval None
+  */
+
+
+void IWDG_Init(IWDG_TypeDef * IWDGx, uint32_t Prescaler , uint32_t Counter)
+{
+  LL_IWDG_Enable(IWDGx);
+  LL_IWDG_EnableWriteAccess(IWDGx);
+  LL_IWDG_SetPrescaler(IWDGx,Prescaler);
+	LL_IWDG_SetReloadCounter(IWDGx,Counter);
+
+	while (LL_IWDG_IsReady(IWDGx) != 1)
+	  {
+	  }
+
+	  LL_IWDG_ReloadCounter(IWDGx);
+}
+
+
+/**
+  * @brief  Refresh Independent watchdog.
+  * @param  None.
+  * @retval None
+  */
+void IWDG_Refresh(void)
+{
+	  LL_IWDG_ReloadCounter(IWDG);
+}
+
+/**
+  * @brief  Initialize the window watchdog.
+  * @param  Counter 0..0x7F (7 bit counter value)
+  * @param  Prescaler This parameter can be one of the following values:
+  *         @arg @ref LL_WWDG_PRESCALER_1
+  *         @arg @ref LL_WWDG_PRESCALER_2
+  *         @arg @ref LL_WWDG_PRESCALER_4
+  *         @arg @ref LL_WWDG_PRESCALER_8
+  * @param  Window 0x00..0x7F (7 bit Window value)
+  * @Note To calculate the right counter to get the required TimeOut follow the next equation
+  *
+  *               APB1 Clock x Max_TimeOut
+  * Counetr = --------------------------- + 64 ;
+  *             4096 x 2^(div_rank) x 1000
+  *
+  *                        APB1 Clock x Min_TimeOut
+  * Window  = Counetr - ---------------------------  ;
+  *                      4096 x 2^(div_rank) x 1000
+  *
+  * TimeOut the required time
+  * APB1 Clock = 16 000 000
+  * div_rank This parameter depand on WWDG Prescaler it can be one of the following values:
+  *                  0 for  LL_WWDG_PRESCALER_1
+  *                  1 for  LL_WWDG_PRESCALER_2
+  *                  2 for  LL_WWDG_PRESCALER_4
+  *                  3 for  LL_WWDG_PRESCALER_8
+  *
+  *
+  * ///////////[Min_TimeOut                             Max_TimeOut]///////////////////////
+  * ---------------------------------------------------------------------------------------
+  *
+  * @retval None
+  */
+
+
+
+void WWDG_Init(uint32_t Prescaler,uint32_t Counter, uint32_t Window)
+{
+
+WWDG_ClockEnable;
+
+LL_WWDG_SetCounter(WWDG,Counter);//Timeout_Max=20ms
+LL_WWDG_Enable(WWDG);
+LL_WWDG_SetPrescaler(WWDG,Prescaler);
+LL_WWDG_SetWindow(WWDG, Window);//Timeout_Min=13ms
+
+}
+
+/**
+  * @brief  Refresh Window watchdog.
+  * @param  Counter 0..0x7F (7 bit counter value)
+  * @retval None
+  */
+void WWDG_Refresh(uint32_t counter)
+{
+
+LL_WWDG_SetCounter(WWDG, counter);//Timeout_Max=20ms
+}
+
+
+

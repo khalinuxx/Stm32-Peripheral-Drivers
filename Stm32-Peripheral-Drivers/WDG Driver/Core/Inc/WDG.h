@@ -1,0 +1,40 @@
+
+/**
+  ******************************************************************************
+  * @file    WDG.h
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   header file of WhatchDoG LL Driver.
+  * Created on: 10 Aug. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services, R&D Team.
+  * All rights reserved.
+  ******************************************************************************
+  */
+
+
+#ifndef WDG_H_
+#define WDG_H_
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include"stm32f4xx_ll_bus.h"
+#include"stm32f4xx_ll_iwdg.h"
+#include"stm32f4xx_ll_wwdg.h"
+
+
+#define WWDG_ClockEnable LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_WWDG)
+
+
+/*-------------------------Indepandent Whatchdog Functions--------------------------*/
+void IWDG_Init(IWDG_TypeDef * IWDGx,uint32_t Div,uint32_t Counter);
+void IWDG_Refresh(void);
+
+/*------------------------- Window Whatchdog Functions------------------------------*/
+void WWDG_Init(uint32_t Prescaler,uint32_t Counter, uint32_t Window);
+void WWDG_Refresh(uint32_t counter);
+
+
+
+
+
+#endif /* WDG_H_ */

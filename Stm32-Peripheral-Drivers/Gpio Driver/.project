@@ -28,4 +28,26 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>DRIVERS</name>
+			<type>2</type>
+			<location>E:/Actia_2022/Stm32-Peripheral-Drivers/DRIVERS</location>
+		</link>
+		<link>
+			<name>GPIO_Drivers</name>
+			<type>2</type>
+			<location>C:/Users/kalil/Desktop/PFA/STM2/Stm32-Peripheral-Drivers/DRIVERS/STM32F4xx_LL_Driver/GPIO_Drivers</location>
+		</link>
+		<link>
+			<name>STM32F4xx_HAL_Driver</name>
+			<type>2</type>
+			<location>E:/Actia_2022/Stm32-Peripheral-Drivers/DRIVERS/STM32F4xx_HAL_Driver</location>
+		</link>
+		<link>
+			<name>Src</name>
+			<type>2</type>
+			<location>E:/Actia_2022/Stm32-Peripheral-Drivers/DRIVERS/STM32F4xx_HAL_Driver/Src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

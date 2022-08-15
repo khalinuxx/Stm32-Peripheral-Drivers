@@ -1,0 +1,6 @@
+stm32f4xx_ll_tim.h:1051:22:LL_TIM_EnableCounter	16	static
+stm32f4xx_ll_tim.h:1362:22:LL_TIM_SetAutoReload	16	static
+stm32f4xx_ll_tim.h:3063:22:LL_TIM_ClearFlag_UPDATE	16	static
+stm32f4xx_ll_tim.h:3074:26:LL_TIM_IsActiveFlag_UPDATE	16	static
+Timer.c:9:6:LL_Timer_Init	40	static
+Timer.c:25:6:Timer_Delay	16	static

@@ -1,0 +1,15 @@
+core_cm4.h:1688:22:__NVIC_EnableIRQ	16	static
+core_cm4.h:1816:22:__NVIC_SetPriority	16	static
+stm32f4xx_ll_adc.h:2454:22:LL_ADC_REG_SetSequencerRanks	32	static,ignoring_inline_asm
+stm32f4xx_ll_adc.h:2686:22:LL_ADC_REG_SetFlagEndOfConversion	16	static
+stm32f4xx_ll_adc.h:3240:22:LL_ADC_SetChannelSamplingTime	48	static,ignoring_inline_asm
+stm32f4xx_ll_adc.h:3882:22:LL_ADC_REG_StartConversionSWStart	16	static
+stm32f4xx_ll_adc.h:3935:26:LL_ADC_REG_ReadConversionData32	16	static
+stm32f4xx_ll_adc.h:4251:26:LL_ADC_IsActiveFlag_EOCS	16	static
+ADC.c:25:6:ADC_GPIO_Init	40	static
+ADC.c:42:6:ADC_Init	32	static
+ADC.c:62:6:ADC_REG_Init	40	static
+ADC.c:88:6:ADC_Com_Init	32	static
+ADC.c:108:6:ADC_Channel_Init	24	static
+ADC.c:120:10:ADC_Read	16	static
+ADC.c:134:6:ADC_IRQ_Init	16	static

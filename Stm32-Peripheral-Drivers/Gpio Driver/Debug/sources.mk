@@ -20,6 +20,7 @@ OBJCOPY_BIN :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-Src \
-Startup \
+Core/Src \
+Core/Startup \
+GPIO_Drivers/Src \
 

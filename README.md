@@ -3,7 +3,7 @@ The Drivers in `Stm32-Peripheral-Drivers/` directory is a STM32CubeIDE project w
 
 **[The main STM32 Peripheral Drivers repository is located here.](https://github.com/mouadhgit/Stm32-Peripheral-Drivers)**
 
-
+---
 ## Dependencies
 
 To compile the project for the STM32, install the following Software:
@@ -32,7 +32,7 @@ Remove all what in the list except the #DEBUG marco than click on add :
 click on add again:
 - write `USE_FULL_LL_DRIVERS` on Name TextBox for our board than click on `apply` and `apply and close`, To tell the project that we use the LL Drivers.
 
-
+---
 ## Usage  
 
 To use the drivers in your project you need to: 
@@ -41,9 +41,11 @@ To use the drivers in your project you need to:
 
 - copy `\Stm32-Peripheral-Drivers\Driver_Folder\Inc\Driver_Name.h`  and paste it on your project `Inc` directory
 
+---
 ## Divers
 This project contain :
 - Gpio Driver
-
-
+- Uart Driver
+- Timer Driver
+- WDG Driver
 

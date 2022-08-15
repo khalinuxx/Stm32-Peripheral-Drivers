@@ -1,0 +1,15 @@
+stm32f4xx_ll_bus.h:1187:22:LL_APB1_GRP1_EnableClock	24	static
+stm32f4xx_ll_iwdg.h:141:22:LL_IWDG_Enable	16	static
+stm32f4xx_ll_iwdg.h:152:22:LL_IWDG_ReloadCounter	16	static
+stm32f4xx_ll_iwdg.h:163:22:LL_IWDG_EnableWriteAccess	16	static
+stm32f4xx_ll_iwdg.h:193:22:LL_IWDG_SetPrescaler	16	static
+stm32f4xx_ll_iwdg.h:223:22:LL_IWDG_SetReloadCounter	16	static
+stm32f4xx_ll_iwdg.h:277:26:LL_IWDG_IsReady	16	static
+stm32f4xx_ll_wwdg.h:124:22:LL_WWDG_Enable	16	static
+stm32f4xx_ll_wwdg.h:151:22:LL_WWDG_SetCounter	16	static
+stm32f4xx_ll_wwdg.h:180:22:LL_WWDG_SetPrescaler	16	static
+stm32f4xx_ll_wwdg.h:216:22:LL_WWDG_SetWindow	16	static
+WDG.c:58:6:IWDG_Init	24	static
+WDG.c:78:6:IWDG_Refresh	8	static
+WDG.c:120:6:WWDG_Init	24	static
+WDG.c:137:6:WWDG_Refresh	16	static
