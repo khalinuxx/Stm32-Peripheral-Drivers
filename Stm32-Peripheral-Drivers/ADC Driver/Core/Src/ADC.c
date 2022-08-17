@@ -69,7 +69,7 @@ void ADC_REG_Init(ADC_TypeDef *ADCx)
 	  ADC_REG_InitStruct.ContinuousMode =  LL_ADC_REG_CONV_SINGLE;
 	  ADC_REG_InitStruct.DMATransfer = LL_ADC_REG_DMA_TRANSFER_NONE;
 	  LL_ADC_REG_Init(ADCx, &ADC_REG_InitStruct);
-	  LL_ADC_REG_SetFlagEndOfConversion(ADCx, LL_ADC_REG_FLAG_EOC_SEQUENCE_CONV);
+	  LL_ADC_REG_SetFlagEndOfConversion(ADCx, LL_ADC_REG_FLAG_EOC_UNITARY_CONV);
 
 
 }
@@ -130,7 +130,10 @@ uint32_t ADC_Read(ADC_TypeDef *ADCx)
 
 
 
-
+/**
+  * @brief  Config and Enable NVIC For ADC Interrupt
+  * @param  periority Interrupt periority
+  */
 void ADC_IRQ_Init(uint32_t priority)
 {
 	NVIC_SetPriority(ADC_IRQn,priority);
@@ -139,26 +142,112 @@ void ADC_IRQ_Init(uint32_t priority)
 
 
 
-/*
-static void callback(ADC_TypeDef *ADCx)
+
+
+/**
+  * @brief Enable ADC Interrupts
+
+  * @param  ADCx The ADC Instance .
+  * @param  IT   Enable Specific Interrupt wich Can Be:
+  *                              EOCS_IT   ------> Enable interruption ADC group regular end of unitary conversion or end of sequence conversions.
+  *                              OVR_IT    ------> Enable ADC group regular interruption overrun.
+  *                              JEOS_IT   ------> Enable interruption ADC group injected end of sequence conversions.
+  *                              AWD1_IT   ------> Enable interruption ADC analog watchdog 1..
+  *
+  *
+  * @retval None
+  */
+void ADC_IType_Enable(ADC_TypeDef *ADCx,ADC_IType IT)
 {
-	if(!LL_ADC_IsActiveFlag_OVR(ADCx))
-	{
-		LL_ADC_ClearFlag_EOCS(ADCx);
+	 LL_ADC_Disable(ADCx);
+  switch(IT)
+  {
+  case EOCS_IT :
+	  LL_ADC_EnableIT_EOCS(ADCx);
 
-		while(!LL_ADC_IsActiveFlag_EOCS(ADCx)){}
+  break;
+  case OVR_IT:
+	  LL_ADC_EnableIT_OVR(ADCx);
 
-		temp= LL_ADC_REG_ReadConversionData32(ADCx);
+  break;
+  case JEOS_IT :
+	  LL_ADC_EnableIT_JEOS(ADCx);
+  break;
+  case AWD1_IT:
+	  LL_ADC_EnableIT_AWD1(ADCx);
+  break;
 
-		LL_GPIO_TogglePin(GPIOD,LL_GPIO_PIN_15);
-		for(int itr=0;itr<90000;itr++){}
-	}
-
+  }
 
 }
 
+
+
+/**
+  * @brief Disable ADC Interrupts
+
+  * @param  ADCx The ADC Instance .
+  * @param  IT   Disable Specific Interrupt wich Can Be:
+  *                              EOCS_IT   ------> Disable interruption ADC group regular end of unitary conversion or end of sequence conversions.
+  *                              OVR_IT    ------> Disable ADC group regular interruption overrun.
+  *                              JEOS_IT   ------> Disable interruption ADC group injected end of sequence conversions.
+  *                              AWD1_IT   ------> Disable interruption ADC analog watchdog 1..
+  *
+  *
+  * @retval None
+  */
+void ADC_IType_Disable(ADC_TypeDef *ADCx,ADC_IType IT)
+{
+   LL_ADC_Disable(ADCx);
+  switch(IT)
+  {
+  case EOCS_IT :
+    LL_ADC_DisableIT_EOCS(ADCx);
+
+  break;
+  case OVR_IT:
+    LL_ADC_DisableIT_OVR(ADCx);
+
+  break;
+  case JEOS_IT :
+    LL_ADC_DisableIT_JEOS(ADCx);
+  break;
+  case AWD1_IT:
+    LL_ADC_DisableIT_AWD1(ADCx);
+  break;
+
+  }
+
+}
+
+
+/*@brief ADC Interrupt Handler
+ * void ADC_IRQnHandler(void)
+ *
+ *
+ *
+ * >>>> If The Interrupt Enable Uncomment The Next Section And Paste It In The Main.c File.
+ * */
+/*
 void ADC_IRQnHandler(void)
 {
-	callback(ADC1);
+if(LL_ADC_IsEnabledIT_OVR(ADC1) && LL_ADC_IsActiveFlag_OVR(ADC1)!=0)
+	{
+
+		LL_GPIO_TogglePin(GPIOD,LL_GPIO_PIN_12);
+
+	} else
+
+	if(LL_ADC_IsEnabledIT_EOCS(ADC1) && LL_ADC_IsActiveFlag_EOCS(ADC1)!=0)
+		{
+
+		LL_ADC_ClearFlag_EOCS(ADC1);
+
+		temp= LL_ADC_REG_ReadConversionData32(ADC1);
+
+		LL_GPIO_TogglePin(GPIOD,LL_GPIO_PIN_14);
+		for(int itr=0;itr<90000;itr++){}
+
+	}
 }
 */

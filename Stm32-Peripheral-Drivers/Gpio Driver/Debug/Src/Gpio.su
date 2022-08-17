@@ -1,9 +1,0 @@
-stm32f4xx_ll_gpio.h:274:22:LL_GPIO_SetPinMode	40	static,ignoring_inline_asm
-stm32f4xx_ll_gpio.h:414:22:LL_GPIO_SetPinSpeed	40	static,ignoring_inline_asm
-stm32f4xx_ll_gpio.h:485:22:LL_GPIO_SetPinPull	40	static,ignoring_inline_asm
-stm32f4xx_ll_gpio.h:801:26:LL_GPIO_IsInputPinSet	16	static
-stm32f4xx_ll_gpio.h:882:22:LL_GPIO_SetOutputPin	16	static
-stm32f4xx_ll_gpio.h:911:22:LL_GPIO_ResetOutputPin	16	static
-Gpio.c:109:6:GPIO_Init	16	static
-Gpio.c:137:7:LL_GPIO_Write	24	static
-Gpio.c:160:6:LL_GPIO_Read	16	static

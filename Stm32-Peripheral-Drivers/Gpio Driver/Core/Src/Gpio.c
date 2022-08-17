@@ -153,7 +153,7 @@ static uint32_t Get_SysLN(uint32_t InPin)
  	case (LL_GPIO_PIN_14):
  			return LL_SYSCFG_EXTI_LINE14;
  		break;
- 	case (LL_GPIO_PIN_15):
+ 	default :
  			return LL_SYSCFG_EXTI_LINE15;
  		break;
  	}
@@ -209,7 +209,7 @@ static uint32_t Get_SysLN(uint32_t InPin)
  	case (LL_GPIO_PIN_14) :
  		return EXTI15_10_IRQn;
  	    break;
- 	case (LL_GPIO_PIN_15) :
+ 	default :
  		return EXTI15_10_IRQn;
  	    break;
  	}
@@ -230,7 +230,7 @@ static uint32_t Get_SysLN(uint32_t InPin)
    * @param  priority  Interrupt Priority to set
    * @Note   The priority cannot be set for every processor exception
  */
- void EXTI_Line_Init(uint32_t Port,uint32_t InPin,uint32_t priority)
+ void GPIO_IRQ_Init(uint32_t Port,uint32_t InPin,uint32_t priority)
  {
 
 

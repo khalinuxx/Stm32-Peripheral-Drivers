@@ -42,7 +42,7 @@ void USART_GPIO_Init(GPIO_TypeDef * GPIOx, uint32_t PIN ,uint32_t Alternate )
 
 /**
   * @brief  Initialize The Usart Peripheral
-  * @param  USARTx The USART instance where x can be [1..6]
+  * @param  USARTx The USART instance where x can be [1/2/3/6] and UARTx where x can be [4/5]
   *
   *
   * @USART_InitStruct This instance containe all The USART Parameters
@@ -86,6 +86,9 @@ void UART_Init(USART_TypeDef *USARTx)
 	  USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
 	  USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
 	  LL_USART_Init(USARTx, &USART_InitStruct);
+
+
+
 	  LL_USART_ConfigAsyncMode(USARTx);    /* Perform basic configuration of USART for enabling use in Asynchronous Mode (UART) */
 	//LL_USART_ConfigSyncMode (USARTx);    /* if u want to use USARTx in Synchronous Mode Uncomment this line and delete the LL_USART_ConfigAsyncMode function */
 	  LL_USART_Enable(USARTx);             /* USARTx Must be enabled before using the LL_USART_Init function */
@@ -131,3 +134,149 @@ int __io_putchar(int ch)
 	USART_Write(ch,USART2);
 	return ch;
 }
+
+
+
+
+/**
+  * @brief Enable USART Interrupts
+
+  * @param  USARTx The USART Instance .
+  * @param  IT   Enable Specific Interrupt wich Can Be:
+  *                              TX_IT   ------> Enable TX Empty Interrupt.
+  *                              TC_IT   ------> Enable Transmission Complete Interrupt.
+  *                              PE_IT   ------> Enable Parity Error Interrupt
+  *                              RX_IT   ------> Enable RX Not Empty Interrupt.
+  *                              IDLE_IT ------> Enable IDLE Line is detected Interrupt.
+  *
+  * @retval None
+  */
+
+void USART_IType_Enable(USART_TypeDef *USARTx,USART_IType IT)
+{
+	LL_USART_Disable(USARTx);
+	switch(IT)
+	{
+	case TX_IT :
+	LL_USART_EnableIT_TXE(USARTx);
+	break;
+	case TC_IT:
+	LL_USART_EnableIT_TC(USARTx);
+	break;
+	case PE_IT :
+	LL_USART_EnableIT_PE(USARTx);
+	break;
+	case RX_IT:
+	LL_USART_EnableIT_RXNE(USARTx);
+	break;
+	case IDLE_IT:
+	LL_USART_EnableIT_IDLE (USARTx);
+    break;
+	}
+	LL_USART_Enable(USARTx);
+}
+
+
+
+/**
+  * @brief Disable USART Interrupts
+
+  * @param  USARTx The USART Instance .
+  * @param  IT   Disable Specific Interrupt wich Can Be:
+  *                              TX_IT   ------> Disable TX Empty Interrupt.
+  *                              TC_IT   ------> Disable Transmission Complete Interrupt.
+  *                              PE_IT   ------> Disable Parity Error Interrupt
+  *                              RX_IT   ------> Disable RX Not Empty Interrupt.
+  *                              IDLE_IT ------> Disable IDLE Line is detected Interrupt.
+  *
+  * @retval None
+  */
+
+void USART_IType_Disable(USART_TypeDef *USARTx,USART_IType IT)
+{
+  LL_USART_Disable(USARTx);
+  switch(IT)
+  {
+  case TX_IT :
+  LL_USART_DisableIT_TXE(USARTx);
+  break;
+  case TC_IT:
+  LL_USART_DisableIT_TC(USARTx);
+  break;
+  case PE_IT :
+  LL_USART_DisableIT_PE(USARTx);
+  break;
+  case RX_IT:
+  LL_USART_DisableIT_RXNE(USARTx);
+  break;
+	case IDLE_IT:
+	LL_USART_DisableIT_IDLE (USARTx);
+  break;
+
+  }
+  LL_USART_Enable(USARTx);
+}
+
+
+
+/**
+  * @brief  Initialize The NVIC
+  * @param  IRQn  Interrupt number.
+  * @param  priority  Priority to set.
+  */
+void USART_IRQ_Init(USART_TypeDef *USARTx,IRQn_Type IRQn, uint32_t priority)
+{
+	LL_USART_Disable(USARTx);
+ 	NVIC_EnableIRQ(IRQn);
+ 	NVIC_SetPriority(IRQn,priority);
+ 	LL_USART_Enable(USARTx);
+}
+
+
+
+
+
+/*---------------------------------------------------USART Interrupt Handler--------------------------------------*/
+/*       USART Handlers
+ *----------------------------
+ * void USART1_IRQHandler(void)
+ * void USART2_IRQHandler(void)
+ * void USART3_IRQHandler(void)
+ * void UART4_IRQHandler(void)
+ * void UART5_IRQHandler(void)
+ * void USART6_IRQHandler(void)
+ *
+ * >>>> If The Interrupt Enable Uncomment The Next Section And Paste It In The Main.c File.
+ * >>>> Don't Forget To Use The Right Handler For The Specific Usart Periph.
+ */
+/*
+void USART2_IRQHandler(void)
+{
+	if(LL_USART_IsEnabledIT_TXE (USART2) && LL_USART_IsActiveFlag_TXE(USART2))
+	{
+		// Do Something For the TX Interrupt
+		LL_GPIO_SetOutputPin(GPIOD,LL_GPIO_PIN_14);
+		LL_USART_TransmitData8(USART2,'x');
+
+	}
+	if(LL_USART_IsEnabledIT_TC (USART2) && LL_USART_IsActiveFlag_TC(USART2))
+		{
+			// Do Something For the Transmit Complet (TC) Interrupt
+			LL_GPIO_SetOutputPin(GPIOD,LL_GPIO_PIN_15);
+
+			LL_USART_ClearFlag_TC(USART2);
+
+		}
+	if(LL_USART_IsEnabledIT_RX (USART2) && LL_USART_IsActiveFlag_RX(USART2))
+		{
+			// Do Something For the Transmit Complet (TC) Interrupt
+			LL_GPIO_SetOutputPin(GPIOD,LL_GPIO_PIN_15);
+
+			LL_USART_ClearFlag_TC(USART2);
+
+		}
+
+
+
+}
+*/

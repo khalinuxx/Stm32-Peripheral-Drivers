@@ -22,6 +22,7 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
 #include <stdio.h>
 #include "stm32f4xx_ll_gpio.h"
+#include "stm32f4xx_ll_exti.h"
 #include "stm32f4xx_ll_bus.h"
 #include "stm32f4xx_ll_usart.h"
 #include "stm32f4xx_ll_rcc.h"
@@ -50,8 +51,24 @@
 
 
 
+typedef enum
+{
+  TX_IT ,
+  RX_IT ,
+  PE_IT,
+  TC_IT,
+  IDLE_IT
+}USART_IType;
+
+
+
 void USART_GPIO_Init(GPIO_TypeDef * GPIOX, uint32_t PIN ,uint32_t Alternate );
 void UART_Init(USART_TypeDef *USARTx);
+
+void USART_IType_Enable(USART_TypeDef *USARTx,USART_IType IT);
+void USART_IRQ_Init(USART_TypeDef *USARTx,IRQn_Type IRQn, uint32_t priority);
+void USART_IType_Disable(USART_TypeDef *USARTx,USART_IType IT);
+
 void USART_Write(int ch,USART_TypeDef *USARTx);
 char USART_Read(USART_TypeDef *USARTx);
 int __io_putchar(int ch);

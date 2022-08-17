@@ -12,7 +12,17 @@ The UART Driver includes the following features:
 - Transmit data .
 - Reads data.
 ---
-## Funtions
+## Clocks
+### USART Clock Enable
+To Enable Clock For USARTs Just Use The Next Instruction 
+- USARTx_ClockEnable; ----> Where x Can Be 1,2,3 or 6 
+- UARTx_ClockEnable;  ----> Where x Can Be 4 or 5
+### USART Clock Disable
+To Disable Clock For USARTs Just Use The Next Instruction 
+- USARTx_ClockDisable; ----> Where x Can Be 1,2,3 or 6 
+- UARTx_ClockDisable;  ----> Where x Can Be 4 or 5
+---
+## USART Funtions
 This driver contain 3 funtions
 ### UART_Init(USART_TypeDef *USARTx)
 - Initialize The Usart Peripheral
@@ -21,7 +31,7 @@ This driver contain 3 funtions
 * USART_InitStruct param go and check [STM32F4 HAL AND LL DRIVER description](https://www.st.com/resource/en/user_manual/um1725-description-of-stm32f4-hal-and-lowlayer-drivers-stmicroelectronics.pdf) Page 2020.
 ### USART_Write(int ch,USART_TypeDef *USARTx)
 - This Function Allow User Write a byte on USART Periph.
-- USARTx The USART Instance
+- USARTx The USART Instance                                             
 - ch Data That will be Send.
 ### USART_Read(USART_TypeDef *USARTx)
 - Recive data from The Usart Periph.
@@ -31,6 +41,37 @@ This driver contain 3 funtions
 - Function to Write a Set of Byte
 - str Set of Byte
 * Note : to change Usart Peripheral Open Uart.c file and go to line 131  
+## USART Interrupt Funtions
+### USART_IType_Enable(USART_TypeDef *USARTx,IT_Type IT)
+- Enable USART Interrupts
+- USARTx The USART Instance
+- IT   Enable Specific Interrupt wich Can Be: 
+-                              TX_IT   ------> Enable TX Empty Interrupt.
+-                              TC_IT   ------> Enable Transmission Complete Interrupt.
+-                              PE_IT   ------> Enable Parity Error Interrupt
+-                              RX_IT   ------> Enable RX Not Empty Interrupt.
+-                              IDLE_IT ------> Enable IDLE Line is detected Interrupt.
+### USART_IType_Disable(USART_TypeDef *USARTx,IT_Type IT)
+- Disable USART Interrupts
+- USARTx The USART Instance
+- IT   Disable Specific Interrupt wich Can Be: 
+-                              TX_IT   ------> Disable TX Empty Interrupt.
+-                              TC_IT   ------> Disable Transmission Complete Interrupt.
+-                              PE_IT   ------> Disable Parity Error Interrupt
+-                              RX_IT   ------> Disable RX Not Empty Interrupt.
+-                              IDLE_IT ------> Disable IDLE Line is detected Interrupt.
+### USART_NVIC_Init(USART_TypeDef *USARTx,IRQn_Type IRQn, uint32_t priority)
+- Initialize The NVIC
+- IRQn  Interrupt number.
+- priority  Priority to set.
+### USART Handlers
+- void USART1_IRQHandler(void) 
+- void USART2_IRQHandler(void)
+- void USART3_IRQHandler(void)
+- void UART4_IRQHandler(void)
+- void UART5_IRQHandler(void)
+- void USART6_IRQHandler(void)
+
 ## Usage
 
 To Use This Driver in Your Project You Need To: 

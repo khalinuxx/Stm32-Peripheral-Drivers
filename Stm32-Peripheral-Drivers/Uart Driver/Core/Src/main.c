@@ -28,11 +28,19 @@ int main(void){
 
 	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);
 	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_15,LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_14,LL_GPIO_MODE_OUTPUT);
 
 	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_0,LL_GPIO_MODE_INPUT);
+
 	USART_GPIO_Init(GPIOA,LL_GPIO_PIN_2,LL_GPIO_AF_7);
 	USART_GPIO_Init(GPIOA,LL_GPIO_PIN_3,LL_GPIO_AF_7);
 	USART2_ClockEnable;
+/*--------------------------USART Interrupt Config --------------------------------------------*/
+	//USART_IType_Enable(USART2,TX_IT);
+	//USART_IType_Enable(USART2,TC_IT);
+	//USART_IRQ_Init(USART2,USART2_IRQn, 0);
+
 	UART_Init(USART2);                       /* uart instialization */
 
   while(1){
@@ -40,18 +48,17 @@ int main(void){
 	         /* To Transmit a string uncomment This line  */
 	          //uart_write('b');       /* Function to Transmit one character */
 
-	          //for(int itr=0 ; itr<90000;itr++){}
-            if(USART_Read(USART2)=='b')
-            {
-	        LL_GPIO_TogglePin(GPIOD,LL_GPIO_PIN_15);
-            printf("Hello world /n ");
-            }
+            printf("Hello world \n ");
+
+
+
 
 
            }
 
 
 }
+
 
 
 

@@ -61,10 +61,10 @@ Discarded input sections
  .text.LL_SYSCFG_SetEXTISource
                 0x0000000000000000       0x5c ./Core/Src/Gpio.o
  .text.Get_SysLN
-                0x0000000000000000      0x1d4 ./Core/Src/Gpio.o
+                0x0000000000000000      0x1c0 ./Core/Src/Gpio.o
  .text.Get_IRQn
-                0x0000000000000000      0x198 ./Core/Src/Gpio.o
- .text.EXTI_Line_Init
+                0x0000000000000000      0x184 ./Core/Src/Gpio.o
+ .text.GPIO_IRQ_Init
                 0x0000000000000000       0x56 ./Core/Src/Gpio.o
  .group         0x0000000000000000        0xc ./Core/Src/main.o
  .group         0x0000000000000000        0xc ./Core/Src/main.o
@@ -1097,14 +1097,14 @@ LOAD c:/st/stm32cubeide_1.7.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .debug_line    0x0000000000000c81       0x89 ./Core/Startup/startup_stm32f407vgtx.o
  .debug_line    0x0000000000000d0a      0x7ca ./GPIO_Drivers/Src/stm32f4xx_ll_gpio.o
 
-.debug_str      0x0000000000000000    0x8b73e
- .debug_str     0x0000000000000000    0x8aff9 ./Core/Src/Gpio.o
-                                      0x8b1d8 (size before relaxing)
- .debug_str     0x000000000008aff9       0x31 ./Core/Src/main.o
+.debug_str      0x0000000000000000    0x8b73d
+ .debug_str     0x0000000000000000    0x8aff8 ./Core/Src/Gpio.o
+                                      0x8b1d7 (size before relaxing)
+ .debug_str     0x000000000008aff8       0x31 ./Core/Src/main.o
                                       0x8aa71 (size before relaxing)
- .debug_str     0x000000000008b02a       0x36 ./Core/Startup/startup_stm32f407vgtx.o
+ .debug_str     0x000000000008b029       0x36 ./Core/Startup/startup_stm32f407vgtx.o
                                          0x9a (size before relaxing)
- .debug_str     0x000000000008b060      0x6de ./GPIO_Drivers/Src/stm32f4xx_ll_gpio.o
+ .debug_str     0x000000000008b05f      0x6de ./GPIO_Drivers/Src/stm32f4xx_ll_gpio.o
                                       0x89798 (size before relaxing)
 
 .comment        0x0000000000000000       0x53

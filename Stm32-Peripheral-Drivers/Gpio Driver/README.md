@@ -11,6 +11,14 @@ The GPIO Driver includes the following features:
 - Sets or clears the selected data port bit.
 - Reads the specified input port pin.
 ---
+## Clocks
+### GPIO Clock Enable
+To Enable Clock For GPIOs Just Use The Next Instruction 
+- GPIOx_ClockEnable; ----> Where x Can Be [A..I] 
+### GPIO Clock Disable
+To Disable Clock For GPIOs Just Use The Next Instruction 
+- GPIOx_ClockDisable; ----> Where x Can Be [A..I] 
+---
 ## Funtions
 This driver contain 3 funtions
 ### GPIO_Init(GPIO_TypeDef *GPIOx,  uint32_t Pin,uint32_t Mode);

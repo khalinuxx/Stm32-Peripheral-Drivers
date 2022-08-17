@@ -93,6 +93,6 @@ typedef enum
 void GPIO_Init(GPIO_TypeDef *GPIOx,  uint32_t Pin,uint32_t Mode);
 void GPIO_Write(GPIO_TypeDef  *GPIOx,uint32_t GPIO_Pin,ll_pinstate_t PinState);
 ll_pinstate_t GPIO_Read(GPIO_TypeDef  *GPIOx,uint32_t GPIO_Pin);
-void EXTI_Line_Init(uint32_t Port,uint32_t Pin,uint32_t priority);
+void GPIO_IRQ_Init(uint32_t Port,uint32_t InPin,uint32_t priority);
 
 #endif /* GPIO_H_ */

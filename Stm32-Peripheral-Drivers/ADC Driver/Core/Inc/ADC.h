@@ -26,6 +26,15 @@
 #define ADC2_EnableClock LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC2)
 #define ADC3_EnableClock LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC3)
 
+
+typedef enum
+{
+  EOCS_IT ,
+  OVR_IT ,
+  AWD1_IT,
+  JEOS_IT
+}ADC_IType;
+
 /* don't forget to Enable GPIO Clock Before The Next Function */
 void ADC_GPIO_Init(GPIO_TypeDef *GPIOx,uint32_t Pin);
 /* don't forget to Enable ADC Clock Before The Next Function */
@@ -37,5 +46,7 @@ void ADC_Channel_Init(ADC_TypeDef *ADCx,uint32_t Rank , uint32_t Channel);
 uint32_t ADC_Read(ADC_TypeDef *ADCx);
 
 void ADC_IRQ_Init(uint32_t priority);
+void ADC_IType_Enable(ADC_TypeDef *ADCx,ADC_IType IT);
+void ADC_IType_Disable(ADC_TypeDef *ADCx,ADC_IType IT);
 
 #endif /* ADC_H_ */

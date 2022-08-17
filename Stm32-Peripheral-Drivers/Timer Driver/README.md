@@ -13,7 +13,15 @@ The Timer Driver includes the following features:
 
 
 ---
-
+## Clocks
+### TIMER Clock Enable
+To Enable Clock For TIMERs Just Use The Next Instruction 
+- TIMERx_ClockEnable; ----> Where x Can Be [1..14]
+### TIMER Clock Disable
+To Disable Clock For TIMERs Just Use The Next Instruction 
+- TIMERx_ClockDisable; ----> Where x Can Be [1..14] 
+---
+## Timer Functions
 ### TIM_GPIO_Init(GPIO_TypeDef *GPIOx,uint32_t Pin,uint32_t Alternate)
 - Initialize The GPIO Pin 
 - GPIOx GPIO Instance where x can be (A..H)
