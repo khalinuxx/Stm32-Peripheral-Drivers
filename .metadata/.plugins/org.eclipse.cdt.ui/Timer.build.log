@@ -1,0 +1,21 @@
+10:01:11 **** Build of configuration Debug for project Timer ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/Timer.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32F407xx -DUSE_FULL_LL_DRIVER -c -I"../../../Stm32-Peripheral-Drivers/Gpio Driver/Core/Inc" -I../../../DRIVERS/CMSIS/Device/ST/STM32F4xx/Include -I../../../DRIVERS/CMSIS/Core/Include -I../../../DRIVERS/STM32F4xx_LL_Driver/Timer_Drivers/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/Timer.d" -MT"Core/Src/Timer.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/Timer.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32F407xx -DUSE_FULL_LL_DRIVER -c -I"../../../Stm32-Peripheral-Drivers/Gpio Driver/Core/Inc" -I../../../DRIVERS/CMSIS/Device/ST/STM32F4xx/Include -I../../../DRIVERS/CMSIS/Core/Include -I../../../DRIVERS/STM32F4xx_LL_Driver/Timer_Drivers/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Timer.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\kalil\Desktop\PFA\STM2\Stm32-Peripheral-Drivers\Stm32-Peripheral-Drivers\Timer Driver\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Timer.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Timer.elf
+ 
+arm-none-eabi-size   Timer.elf 
+arm-none-eabi-objdump -h -S  Timer.elf  > "Timer.list"
+arm-none-eabi-objcopy  -O binary  Timer.elf  "Timer.bin"
+   text	   data	    bss	    dec	    hex	filename
+   5268	      8	   1568	   6844	   1abc	Timer.elf
+Finished building: default.size.stdout
+ 
+Finished building: Timer.bin
+ 
+Finished building: Timer.list
+ 
+
+10:01:25 Build Finished. 0 errors, 0 warnings. (took 14s.110ms)
+

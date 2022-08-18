@@ -1,0 +1,99 @@
+
+/**
+  ******************************************************************************
+  * @file    Gpio.c
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Source file of GPIO LL Driver.
+  * Created on: 15 juil. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services, R&D Team.
+  * All rights reserved.
+  ******************************************************************************
+  */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include "../Inc/Gpio.h"
+
+/**
+  * @brief  Initializes the GPIOx peripheral according to the specified parameters in the LL_GPIO_Init.
+  * @param  GPIOx where x can be (A..K) to select the GPIO peripheral for STM32F429X device or
+  *                      x can be (A..I) to select the GPIO peripheral for STM32F40XX and STM32F427X devices.
+  * @param  Pin specifies the Configured pin
+  * @param  Mode can be INPUT or OUTPUT
+  * @retval None
+  */
+void GPIO_Init(GPIO_TypeDef *GPIOx,  uint32_t Pin,uint32_t Mode)
+{
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+switch(Mode)
+{
+case(OUTPUT):
+  /*Configure GPIO pin Output Level */
+  LL_GPIO_ResetOutputPin (GPIOD,P15);
+  GPIO_InitStruct.Pin = P15;
+  GPIO_InitStruct.Mode = Mode;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  break;
+case(INTPUT):
+		 /*Configure GPIO pin input Level */
+			  GPIO_InitStruct.Pin = P0;
+			  GPIO_InitStruct.Mode = Mode;
+			  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO ;
+			  LL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+		break;
+}
+  LL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+}
+
+/**
+  * @brief  Sets or clears the selected data port bit.
+  *
+  * @note   This function use the LL pin Set/Reset functions to set or clear the selected pin
+  *
+  * @param  GPIOx where x can be (A..K) to select the GPIO peripheral for STM32F429X device or
+  *                      x can be (A..I) to select the GPIO peripheral for STM32F40XX and STM32F427X devices.
+  * @param   Pin specifies the port bit to be written.
+  *          This parameter can be one of Px where x can be (0..15 or all).
+  * @param  PinState specifies the value to be written to the selected bit.
+  *          This parameter can be one of the LL_GPIO_PinState enum values:
+  *            @arg PIN_RESET: to clear the port pin
+  *            @arg PIN_SET: to set the port pin
+  * @retval None
+  */
+ void GPIO_Write(GPIO_TypeDef  *GPIOx,uint32_t Pin,ll_pinstate_t PinState)
+ {
+	 if(PinState == PIN_RESET)
+	 {
+      LL_GPIO_ResetOutputPin (GPIOx, Pin); /* Reset the port pin */
+	 }
+	 else
+	 {
+	  LL_GPIO_SetOutputPin (GPIOx, Pin); /* Set the port pin */
+	 }
+ }
+
+
+
+ /**
+   * @brief  Reads the specified input port pin.
+   * @param  GPIOx where x can be (A..K) to select the GPIO peripheral for STM32F429X device or
+   *                      x can be (A..I) to select the GPIO peripheral for STM32F40XX and STM32F427X devices.
+   * @param  GPIO_Pin specifies the port bit to read.
+   *         This parameter can be Px where x can be (0..15 or all).
+   * @retval The input port pin value.
+   */
+ ll_pinstate_t GPIO_Read(GPIO_TypeDef  *GPIOx,uint32_t GPIO_Pin){
+
+	if(LL_GPIO_IsInputPinSet(GPIOx,GPIO_Pin))
+	{
+	  return PIN_SET;
+	}
+	else
+	{
+	  return PIN_RESET;
+	}
+ }

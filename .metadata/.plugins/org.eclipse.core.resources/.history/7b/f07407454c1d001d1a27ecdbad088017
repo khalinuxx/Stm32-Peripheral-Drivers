@@ -1,0 +1,91 @@
+
+/**
+  ******************************************************************************
+  * @file    main.c
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Source file of main
+  *  Created on: 20 juil. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services.
+  * All rights reserved.
+  *
+  * This software is placed in the public domain and may be used for any purpose
+  * You can find this code on https://github.com/mouadhgit/Stm32-Peripheral-Drivers
+  ******************************************************************************
+  */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include "../Inc/Uart.h"
+
+
+#define USART_x USART2 /* change the specific USART from this line and check macros in Uart.h */
+
+
+char rcv;
+int main(void){
+
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_15,LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_14,LL_GPIO_MODE_OUTPUT);
+
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_0,LL_GPIO_MODE_INPUT);
+
+	USART_GPIO_Init(GPIOA,LL_GPIO_PIN_2,LL_GPIO_AF_7);
+	USART_GPIO_Init(GPIOA,LL_GPIO_PIN_3,LL_GPIO_AF_7);
+	USART2_ClockEnable;
+	USART_IType_Enable(USART2,TX_IT);
+	USART_IType_Enable(USART2,TC_IT);
+	USART_TI_Init(USART2,USART2_IRQn, 0);
+	UART_Init(USART2);                       /* uart instialization */
+
+  while(1){
+
+	         /* To Transmit a string uncomment This line  */
+	          //uart_write('b');       /* Function to Transmit one character */
+
+	          //for(int itr=0 ; itr<90000;itr++){}
+            //if(USART_Read(USART2)=='b')
+            //{
+	       // LL_GPIO_TogglePin(GPIOD,LL_GPIO_PIN_15);
+            //printf("Hello world \n ");
+           // }
+	 if(LL_GPIO_IsInputPinSet(GPIOA,LL_GPIO_PIN_0))
+	 {
+
+	  LL_USART_TransmitData8(USART2,'x');
+
+	 }
+
+           }
+
+
+}
+
+void USART_IRQHandler(void)
+{
+	if(LL_USART_IsEnabledIT_TXE (USART2) && LL_USART_IsActiveFlag_TXE(USART2))
+	{
+		// Do Something For the TX Interrupt
+		LL_GPIO_SetOutputPin(GPIOD,LL_GPIO_PIN_14);
+
+	}
+	if(LL_USART_IsEnabledIT_TC (USART2) && LL_USART_IsActiveFlag_TC(USART2))
+		{
+			// Do Something For the TC Interrupt
+			LL_GPIO_SetOutputPin(GPIOD,LL_GPIO_PIN_15);
+
+			LL_USART_ClearFlag_TC(USART2);
+
+		}
+
+
+}
+
+
+
+
+
+

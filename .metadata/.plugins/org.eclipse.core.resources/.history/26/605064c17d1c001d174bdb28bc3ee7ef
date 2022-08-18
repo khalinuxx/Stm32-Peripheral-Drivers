@@ -1,0 +1,37 @@
+
+/**
+  ******************************************************************************
+  * @file    Uart.h
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Header file of Uart LL Driver.
+  *  Created on: 20 juil. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services.
+  * All rights reserved.
+  *
+  * This software is placed in the public domain and may be used for any purpose
+  * You can find this code on https://github.com/mouadhgit/Stm32-Peripheral-Drivers
+  ******************************************************************************
+  */
+
+#ifndef UART_H_
+#define UART_H_
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include <stdio.h>
+#include "stm32f4xx_ll_gpio.h"
+#include "stm32f4xx_ll_bus.h"
+#include "stm32f4xx_ll_usart.h"
+#include "stm32f4xx_ll_rcc.h"
+
+
+void UART2_UART_Init(void);
+void uart_write(int ch);
+char uart_read();
+int __io_putchar(int ch);
+
+
+
+#endif /* UART_H_ */

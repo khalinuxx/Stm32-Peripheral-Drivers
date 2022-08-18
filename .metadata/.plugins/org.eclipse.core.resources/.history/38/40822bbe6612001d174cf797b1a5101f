@@ -1,0 +1,33 @@
+
+/**
+  ******************************************************************************
+  * @file   main.c
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Source file of GPIO LL Driver.
+  * Created on: 15 juil. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services, R&D Team.
+  * All rights reserved.
+  */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include "../Inc/Gpio.h"
+
+int main()
+{
+	  /* GPIO Ports Clock Enable */
+	  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);
+	  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+	GPIO_Init(GPIOA,P0,INPUT);
+	GPIO_Init(GPIOD,P13,OUTPUT);
+	while(1)
+	{
+		if(LL_GPIO_Read(GPIOA,P0)){
+			LL_GPIO_Write(GPIOD,P13,PIN_SET);
+		}else{
+			LL_GPIO_Write(GPIOD,P13,PIN_RESET);
+		}
+	}
+}

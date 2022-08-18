@@ -1,0 +1,30 @@
+#include "TDelay.h"
+
+
+int main()
+{
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2); /* Enable TIMEx Clock */
+	TDelay_Init(TIM2);                                  /* TIMER x initialize */
+	led_init();                                         /* LEDS initialize    */
+	while(1)
+	{
+
+	   TDelay(1000,TIM2);                                                                          /* Delay Function on ms */
+       LL_GPIO_TogglePin(GPIOD,LL_GPIO_PIN_12 | LL_GPIO_PIN_13 | LL_GPIO_PIN_14 | LL_GPIO_PIN_15); /* Toggling LEDs        */
+
+
+	}
+
+
+
+}
+
+
+void led_init(void)
+{
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);         /* Enabling GPIO D Clock   */
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_12,LL_GPIO_MODE_OUTPUT);/* SET Pin 12 Mode OUTPUT */
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_13,LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_14,LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_15,LL_GPIO_MODE_OUTPUT);
+}

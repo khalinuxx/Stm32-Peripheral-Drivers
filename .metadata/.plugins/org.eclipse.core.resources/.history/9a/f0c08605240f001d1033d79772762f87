@@ -1,0 +1,49 @@
+#include "../Inc/Timer.h"
+
+
+
+void led_init(void);
+
+int main()
+{
+
+	/* Note : If u want to use OUTPUT COMPARE Mode just Uncomment the next Section */
+
+    /*
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM4);  // Enabling TIMER4 Clock
+	LL_TIM_OC_Init(TIM4);                   // TIMER4 Output Compare Init Function
+
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD); // Enabling GPIO D Clock
+	LL_TIM_OC_CHANNEL_Init(TIM4,LL_TIM_CHANNEL_CH1,GPIOD, LL_GPIO_PIN_12,LL_GPIO_AF_2); //Channel initialization for OC Mode */
+
+
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2); /* Enable TIMEx Clock */
+	TDelay_Init(TIM2);                                  /* TIMER x initialize */
+	led_init();                                         /* LEDS initialize    */
+	while(1)
+	{
+
+	   TDelay(1000,TIM2);                                                                          /* Delay Function on ms */
+       LL_GPIO_TogglePin(GPIOD,LL_GPIO_PIN_12 | LL_GPIO_PIN_13 | LL_GPIO_PIN_14 | LL_GPIO_PIN_15); /* Toggling LEDs        */
+
+
+	}
+
+
+
+}
+
+
+void led_init(void)
+{
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);         /* Enabling GPIO D Clock   */
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_12,LL_GPIO_MODE_OUTPUT);/* SET Pin 12 Mode OUTPUT */
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_13,LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_14,LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_15,LL_GPIO_MODE_OUTPUT);
+}
+
+
+
+
+

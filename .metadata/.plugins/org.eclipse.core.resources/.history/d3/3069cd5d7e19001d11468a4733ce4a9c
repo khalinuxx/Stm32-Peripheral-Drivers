@@ -1,0 +1,309 @@
+
+#include"stm32f4xx_ll_bus.h"
+#include"stm32f4xx_ll_gpio.h"
+#include"stm32f4xx_ll_exti.h"
+#include"stm32f4xx_ll_system.h"
+#include"stm32f4xx_ll_spi.h"
+
+#define SPI1_ClockEnable LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI1);
+#define SPI2_ClockEnable LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_SPI2);
+#define SPI3_ClockEnable LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_SPI3);
+
+void SPI_GPIO_Init(GPIO_TypeDef *GPIOx,uint32_t Pin,uint32_t Alternate);
+void GPIO_Init(GPIO_TypeDef *GPIOx,  uint32_t Pin);
+void EXTI_Line_Init(uint32_t Port,uint32_t InPin,uint32_t priority);
+void SPI_NVIC_Init(IRQn_Type IRQ);
+void SPI_Master_Init(SPI_TypeDef *SPIx);
+void SPI_Slave_Init(SPI_TypeDef *SPIx);
+void SPI_Enable(SPI_TypeDef *SPIx);
+void Wait_Btn_Press(void);
+//void W8_TR_END(void);
+
+volatile uint8_t btn_press=0;
+
+uint8_t tx_buff='k';
+//uint8_t tx_size=sizeof(tx_buff);
+volatile uint8_t tx_idx=0;
+
+uint8_t rx_buff=0;
+//uint8_t rx_size=sizeof(tx_buff);
+//volatile uint8_t rx_idx=0;
+
+int main()
+{
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+    SPI_GPIO_Init(GPIOA,LL_GPIO_PIN_5,LL_GPIO_AF_5);//SPI1 Master SCK
+    SPI_GPIO_Init(GPIOA,LL_GPIO_PIN_6,LL_GPIO_AF_5);//SPI1 Master MISO
+    SPI_GPIO_Init(GPIOA,LL_GPIO_PIN_7,LL_GPIO_AF_5);//SPI1 Master MOSI
+    GPIO_Init(GPIOA,LL_GPIO_PIN_0);
+    LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
+    SPI_GPIO_Init(GPIOB,LL_GPIO_PIN_13,LL_GPIO_AF_5);//SPI2 Slave SCK
+    SPI_GPIO_Init(GPIOB,LL_GPIO_PIN_14,LL_GPIO_AF_5);//SPI2 Slave MISO
+    SPI_GPIO_Init(GPIOB,LL_GPIO_PIN_15,LL_GPIO_AF_5);//SPI2 Slave MOSI
+
+    EXTI_Line_Init( LL_SYSCFG_EXTI_PORTA,LL_GPIO_PIN_0,0);
+    SPI1_ClockEnable
+    SPI_NVIC_Init(SPI1_IRQn);
+    SPI_Master_Init(SPI1);
+    SPI2_ClockEnable
+    SPI_NVIC_Init(SPI2_IRQn);
+    SPI_Slave_Init(SPI2);
+    SPI_Enable(SPI2);//Enabling the Slave
+    Wait_Btn_Press();//Waiting btn to press
+    SPI_Enable(SPI1);//Enabling the Master
+    //W8_TR_END();
+
+	while(1)
+	{
+
+
+
+
+
+	}
+
+
+
+
+}
+
+void GPIO_Init(GPIO_TypeDef *GPIOx,  uint32_t Pin)
+{
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+GPIO_InitStruct.Mode =LL_GPIO_MODE_INPUT;
+GPIO_InitStruct.Pin = Pin;
+GPIO_InitStruct.Pull = LL_GPIO_PULL_NO ;
+LL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+
+}
+
+
+
+void SPI_GPIO_Init(GPIO_TypeDef *GPIOx,uint32_t Pin,uint32_t Alternate)
+{
+
+	  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+	  GPIO_InitStruct.Pin = Pin;
+	  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+	  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
+	  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+	  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+	  GPIO_InitStruct.Alternate = Alternate;
+	  LL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+
+}
+
+void SPI_Master_Init(SPI_TypeDef *SPIx)
+{
+
+
+
+	  NVIC_SetPriority(SPI1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+	  NVIC_EnableIRQ(SPI1_IRQn);
+
+	  LL_SPI_InitTypeDef SPI_InitStruct = {0};
+
+	  SPI_InitStruct.TransferDirection = LL_SPI_HALF_DUPLEX_TX;
+	  SPI_InitStruct.Mode = LL_SPI_MODE_MASTER;
+	  SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_8BIT;
+	  SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
+	  SPI_InitStruct.ClockPhase = LL_SPI_PHASE_2EDGE;
+	  SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
+	  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV256;
+	  SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
+	  SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
+	  SPI_InitStruct.CRCPoly = 10;
+	  LL_SPI_Init(SPIx, &SPI_InitStruct);
+	  LL_SPI_EnableIT_TXE(SPIx);
+	  LL_I2S_EnableIT_ERR(SPIx);
+
+
+}
+
+void SPI_NVIC_Init(IRQn_Type IRQ)
+{
+	  NVIC_SetPriority(IRQ, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+	  NVIC_EnableIRQ(IRQ);
+}
+
+
+void SPI_Slave_Init(SPI_TypeDef *SPIx)
+{
+
+	  LL_SPI_InitTypeDef SPI_InitStruct = {0};
+
+	  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI1);
+
+	  SPI_InitStruct.TransferDirection = LL_SPI_HALF_DUPLEX_RX;
+	  SPI_InitStruct.Mode = LL_SPI_MODE_SLAVE;
+	  SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_8BIT;
+	  SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
+	  SPI_InitStruct.ClockPhase = LL_SPI_PHASE_2EDGE;
+	  SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
+	  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV256;
+	  SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
+	  SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
+	  SPI_InitStruct.CRCPoly = 10;
+	  LL_SPI_Init(SPIx, &SPI_InitStruct);
+	  LL_SPI_EnableIT_TXE(SPIx);
+	  LL_I2S_EnableIT_ERR(SPIx);
+
+
+}
+
+void SPI_Enable(SPI_TypeDef *SPIx)
+{
+	LL_SPI_Enable(SPIx);
+}
+
+
+void SPI1_TX_Callback(void)
+{
+	LL_SPI_TransmitData8(SPI1,tx_buff);
+}
+
+void SPI2_RX_Callback(void)
+{
+	rx_buff=LL_SPI_ReceiveData8(SPI2);
+}
+
+void SPI_ERR_Callback(void)
+{
+
+	LL_SPI_DisableIT_TXE(SPI1);
+	LL_SPI_DisableIT_RXNE(SPI2);
+
+    //TODO: BLINK LED
+}
+
+/*
+uint8_t CMP_BUFF8 (uint8_t* buff1,uint8_t* buff2 ,uint8_t buff_len)
+{
+	while(buff_len--)
+	{
+
+		if(*buff1 != *buff2 )
+		{
+			return 0;
+		}
+		buff1++;
+		buff2++;
+	}
+
+	return 1;
+}
+*/
+
+
+
+
+// wait until the end of transition
+/*void W8_TR_END(void)
+{
+	/*while(tx_idx!=tx_size)
+	{
+
+	}
+	LL_SPI_DisableIT_TXE(SPI1);
+	while(rx_size > rx_idx)
+	{
+
+
+	}
+	LL_SPI_DisableIT_RXNE(SPI2);*/
+
+	// Test if the buffers muches
+	if(tx_buff==rx_buff)
+    {
+		// tset verified
+
+
+    }else{
+
+    	//LED
+
+    }
+}*/
+
+void EXTI_Line_Init(uint32_t Port,uint32_t InPin,uint32_t priority)
+{
+
+
+	/*LL_EXTI_LINE_0=LL_GPIO_PIN_0 ****
+	 *     ........ = .........
+	 *  .........................
+	 * LL_EXTI_LINE_15=LL_GPIO_PIN_15
+	 */
+
+	LL_APB2_GRP1_EnableClock (LL_APB2_GRP1_PERIPH_SYSCFG);
+	LL_SYSCFG_SetEXTISource(Port, LL_SYSCFG_EXTI_LINE0);
+	LL_EXTI_EnableIT_0_31 (InPin);
+	LL_EXTI_EnableFallingTrig_0_31(InPin);
+	NVIC_EnableIRQ(EXTI0_IRQn);
+	NVIC_SetPriority(EXTI0_IRQn,priority);
+}
+
+void Wait_Btn_Press(void)
+{
+
+	while (!btn_press)
+	{
+
+	}
+
+}
+
+
+void SPI1_IRQHandler(void)
+{
+	if(LL_SPI_IsActiveFlag_TXE(SPI1))
+	{
+
+		SPI1_TX_Callback();
+	}
+
+
+}
+
+
+void SPI2_IRQHandler(void)
+{
+	if(LL_SPI_IsActiveFlag_RXNE(SPI2))
+	{
+
+		SPI2_RX_Callback();
+	} else if (LL_SPI_IsActiveFlag_OVR(SPI2))
+	{
+		SPI_ERR_Callback();
+
+	}
+
+
+}
+
+void EXTI0_IRQHandler(void)
+{
+	if (LL_EXTI_IsActiveFlag_0_31(LL_GPIO_PIN_0)!= RESET)
+	 	{
+	 		//Interrupt Actions Begin
+
+
+		btn_press=1;
+
+
+
+	         //Interrupt Actions End
+
+	 		LL_EXTI_ClearFlag_0_31(LL_GPIO_PIN_0);
+	 	}
+
+}
+
+
+
+
+
+
+
+

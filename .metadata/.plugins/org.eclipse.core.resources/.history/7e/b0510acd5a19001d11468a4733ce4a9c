@@ -1,0 +1,224 @@
+
+
+
+void SPI_GPIO_Init(GPIOx_Typedef * GPIOx,uint32_t Pin,uint32_t Alternate);
+void SPI_NVIC_Init(IRQn_Type IRQ);
+void SPI_Master_Init(SPIx_TypeDef *SPIx);
+void SPI_Slave_Init(SPIx_TypeDef *SPIx);
+
+
+
+uint8_t tx_buff[]="Khalil Mansouri";
+uint8_t tx_size=sizeof(tx_buff);
+volatile uint8_t tx_idx=0;
+
+uint8_t tx_buff[sizeof(tx_buff)];
+uint8_t rx_size=sizeof(tx_buff);
+volatile uint8_t tx_idx=0;
+
+int main()
+{
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+    SPI_GPIO_Init(GPIOA,LL_GPIO_PIN_5,LL_GPIO_AF_5);
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI1);
+    SPI_NVIC_Init(SPI1_IRQn);
+    SPI_Master_Init(SPI1);
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI2);
+    SPI_NVIC_Init(SPI2_IRQn);
+    SPI_Slave_Init(SPI2);
+
+	while()
+	{
+
+
+
+
+
+	}
+
+
+
+
+}
+
+
+
+
+void SPI_GPIO_Init(GPIOx_TypeDef * GPIOx,uint32_t Pin,uint32_t Alternate)
+{
+
+	  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+	  GPIO_InitStruct.Pin = Pin;
+	  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+	  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
+	  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+	  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+	  GPIO_InitStruct.Alternate = Alternate;
+	  LL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+
+}
+
+void SPI_Master_Init(SPIx_TypeDef *SPIx)
+{
+
+
+
+	  NVIC_SetPriority(SPI1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+	  NVIC_EnableIRQ(SPI1_IRQn);
+
+	  LL_SPI_InitTypeDef SPI_InitStruct = {0};
+
+	  SPI_InitStruct.TransferDirection = LL_SPI_HALF_DUPLEX_TX;
+	  SPI_InitStruct.Mode = LL_SPI_MODE_MASTER;
+	  SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_8BIT;
+	  SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
+	  SPI_InitStruct.ClockPhase = LL_SPI_PHASE_2EDGE;
+	  SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
+	  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV256;
+	  SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
+	  SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
+	  SPI_InitStruct.CRCPoly = 10;
+	  LL_SPI_Init(SPIx, &SPI_InitStruct);
+	  LL_SPI_EnableIT_TXE(SPIx);
+	  LL_I2S_EnableIT_ERR(SPIx);
+
+
+}
+
+void SPI_NVIC_Init(IRQn_Type IRQ)
+{
+	  NVIC_SetPriority(IRQ, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+	  NVIC_EnableIRQ(IRQ);
+}
+
+
+void SPI_Slave_Init(SPIx_TypeDef *SPIx)
+{
+
+	  LL_SPI_InitTypeDef SPI_InitStruct = {0};
+
+	  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI1);
+
+	  SPI_InitStruct.TransferDirection = LL_SPI_HALF_DUPLEX_RX;
+	  SPI_InitStruct.Mode = LL_SPI_MODE_SLAVE;
+	  SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_8BIT;
+	  SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
+	  SPI_InitStruct.ClockPhase = LL_SPI_PHASE_2EDGE;
+	  SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
+	  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV256;
+	  SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
+	  SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
+	  SPI_InitStruct.CRCPoly = 10;
+	  LL_SPI_Init(SPIx, &SPI_InitStruct);
+	  LL_SPI_EnableIT_TXE(SPIx);
+	  LL_I2S_EnableIT_ERR(SPIx);
+
+
+}
+
+void SPI_Enable(SPIx_TypeDef *SPIx)
+{
+	LL_SPI_Enable(SPIx);
+}
+
+
+void SPI1_TX_Callback(void)
+{
+	LL_SPI_TransmitData8(SPI1,tx_buff[tx_idx++]);
+}
+
+void SPI2_RX_Callback(void)
+{
+	rx_buff[rx_idx++]=LL_SPI_RecieveData8(SPI2);
+}
+
+void SPI_ERR_Callback(void)
+{
+
+	LL_SPI_DisableIT_TXE(SPI1);
+	LL_SPI_DisableIT_RX(SPI2);
+
+    //TODO: BLINK LED
+}
+
+
+uint8_t CMP_BUFF8 (uint8_t* buff1,uint8_t* buff2 ,uint8_t* buff_len)
+{
+	while(buff_len--)
+	{
+
+		if(*buff1 != *buff2 )
+		{
+			return 0;
+		}
+		buff1++;
+		buff2++;
+	}
+
+	return 1;
+}
+
+
+
+
+
+// wait until the end of transition
+void W8_TR_END(void)
+{
+	while(tx_idx!=tx_size)
+	{
+
+	}
+	LL_SPI_DisableIT_TXE(SPI1);
+	while(rx_size > rx_idx)
+	{
+
+
+	}
+	LL_SPI_DisableIT_RXNE(SPI2);
+
+	// Test if the buffers muches
+	if(CMP_BUFF8((uint8_t *)tx_buff,(uint8_t *)rx_buff,tx_size))
+    {
+		// tset verified
+
+
+    }else{
+
+    	//LED
+
+    }
+}
+
+
+void SPI1_IRQHandler(void)
+{
+	if(LL_SPI_IsActiveFlag_TXE(SPI1))
+	{
+
+		SPI1_TX_Callback();
+	}
+
+
+}
+
+
+void SPI2_IRQHandler(void)
+{
+	if(LL_SPI_IsActiveFlag_RXNE(SPI2))
+	{
+
+		SPI2_RX_Callback();
+	}
+
+
+}
+
+
+
+
+
+
+
+
+

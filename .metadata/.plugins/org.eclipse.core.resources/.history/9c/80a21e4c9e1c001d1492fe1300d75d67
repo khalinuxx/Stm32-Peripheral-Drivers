@@ -1,0 +1,61 @@
+
+/**
+  ******************************************************************************
+  * @file    Uart.h
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Header file of Uart LL Driver.
+  *  Created on: 20 juil. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services.
+  * All rights reserved.
+  *
+  * This software is placed in the public domain and may be used for any purpose
+  * You can find this code on https://github.com/mouadhgit/Stm32-Peripheral-Drivers
+  ******************************************************************************
+  */
+
+#ifndef UART_H_
+#define UART_H_
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include <stdio.h>
+#include "stm32f4xx_ll_gpio.h"
+#include "stm32f4xx_ll_bus.h"
+#include "stm32f4xx_ll_usart.h"
+#include "stm32f4xx_ll_rcc.h"
+
+/*--------------------------------USART Clock Enabling Defines -------------------------*/
+/* @Note This Defines was set specifically for the STM32f4 Board for other boards open the DataSheet and check Functional overview
+ *
+ */
+#define USART1_ClockEnable LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
+#define USART2_ClockEnable LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2)
+#define USART3_ClockEnable LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3)
+#define UART4_ClockEnable LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART4)
+#define UART5_ClockEnable LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART5)
+#define USART6_ClockEnable LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART6)
+
+/*--------------------------------USART Clock Disabling Defines -------------------------*/
+/* @Note This Defines was set specifically for the STM32f4 Board for other boards open the DataSheet and check Functional overview
+ *
+ */
+#define USART1_ClockDisable LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_USART1)
+#define USART2_ClockDisable LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_USART2)
+#define USART3_ClockDisable LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_USART3)
+#define UART4_ClockDisable LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_USART4)
+#define UART5_ClockDisable LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_USART5)
+#define USART6_ClockDisable LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_USART6)
+
+
+
+void USART_GPIO_Init(GPIO_TypeDef * GPIOX, uint32_t PIN ,uint32_t Alternate );
+void UART_Init(USART_TypeDef *USARTx);
+void USART_Write(int ch,USART_TypeDef *USARTx)
+char USART_Read(USART_TypeDef *USARTx);
+int __io_putchar(int ch);
+
+
+
+#endif /* UART_H_ */

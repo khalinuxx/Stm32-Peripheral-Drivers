@@ -1,0 +1,160 @@
+/**
+  ******************************************************************************
+  * @file    ADC.c
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Source file of ADC LL Driver.
+  * Created on: 1 Aug. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services, R&D Team.
+  * All rights reserved.
+  ******************************************************************************
+  */
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include "../Inc/ADC.h"
+
+
+uint32_t temp;
+
+/**
+  * @brief  Initialize ADC GPIO PIN.
+  * @param  ADCx ADC instance
+  * @Param  Pin LL_GPIO_PIN_x where x can be (0..15)
+  */
+void ADC_GPIO_Init(GPIO_TypeDef *GPIOx,uint32_t Pin)
+{
+
+	  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+	  /* ADCx GPIO Configuration */
+	  GPIO_InitStruct.Pin = Pin;
+	  GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
+	  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+	  LL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+
+}
+
+/**
+  * @brief  Initialize some features of ADC instance.
+  * @param  ADCx ADC instance
+  *
+  */
+void ADC_Init(ADC_TypeDef *ADCx)
+{
+
+	  LL_ADC_InitTypeDef ADC_InitStruct = {0};
+
+
+
+	  ADC_InitStruct.Resolution = LL_ADC_RESOLUTION_12B;
+	  ADC_InitStruct.DataAlignment = LL_ADC_DATA_ALIGN_RIGHT;
+	  ADC_InitStruct.SequencersScanMode = LL_ADC_SEQ_SCAN_DISABLE;
+	  LL_ADC_Init(ADCx, &ADC_InitStruct);
+
+
+}
+/**
+  * @brief  Initialize some features of ADC group regular.
+  * @param  ADCx ADC instance
+  *
+  */
+
+void ADC_REG_Init(ADC_TypeDef *ADCx)
+{
+	 LL_ADC_REG_InitTypeDef ADC_REG_InitStruct = {0};
+
+	  ADC_REG_InitStruct.TriggerSource = LL_ADC_REG_TRIG_SOFTWARE;
+	  ADC_REG_InitStruct.SequencerLength = LL_ADC_REG_SEQ_SCAN_DISABLE;
+	  ADC_REG_InitStruct.SequencerDiscont = LL_ADC_REG_SEQ_DISCONT_DISABLE;
+	  ADC_REG_InitStruct.ContinuousMode =  LL_ADC_REG_CONV_CONTINUOUS;
+	  ADC_REG_InitStruct.DMATransfer = LL_ADC_REG_DMA_TRANSFER_NONE;
+	  LL_ADC_REG_Init(ADCx, &ADC_REG_InitStruct);
+	  LL_ADC_REG_SetFlagEndOfConversion(ADCx, LL_ADC_REG_FLAG_EOC_SEQUENCE_CONV);
+
+
+}
+
+/**
+  * @brief  Initialize some features of ADC common parameters
+  *         (all ADC instances belonging to the same ADC common instance)
+  *         and multimode (for devices with several ADC instances available).
+  * @note   The setting of ADC common parameters is conditioned to
+  *         ADC instances state:
+  *         All ADC instances belonging to the same ADC common instance
+  *         must be disabled.
+  * @param  ADCx ADC  instance
+  */
+
+void ADC_Com_Init(ADC_TypeDef *ADCx)
+{
+	 LL_ADC_CommonInitTypeDef ADC_CommonInitStruct = {0};
+
+	  ADC_CommonInitStruct.CommonClock = LL_ADC_CLOCK_SYNC_PCLK_DIV2;
+	  ADC_CommonInitStruct.Multimode = LL_ADC_MULTI_INDEPENDENT;
+	  LL_ADC_CommonInit(__LL_ADC_COMMON_INSTANCE(ADCx), &ADC_CommonInitStruct);
+
+}
+
+
+
+
+/**
+  * @brief  Initialize ADC Channel
+  * @param  ADCx ADC instance
+  * @param  Rank LL_ADC_REG_RANK_x where x can be(1..16)
+  * @param  Channel  ADC channel LL_ADC_CHANNEL_x where x can be (1..16)
+  */
+
+void ADC_Channel_Init(ADC_TypeDef *ADCx,uint32_t Rank , uint32_t Channel)
+{
+	  /** Configure Regular Channel*/
+	  LL_ADC_REG_SetSequencerRanks(ADCx,Rank,Channel);
+	  LL_ADC_SetChannelSamplingTime(ADCx, Channel,LL_ADC_SAMPLINGTIME_112CYCLES);
+}
+
+
+/**
+  * @brief  Read ADC Conversion Value
+  * @param  ADCx ADC instance
+  */
+uint32_t ADC_Read(ADC_TypeDef *ADCx)
+{
+	 LL_ADC_REG_StartConversionSWStart(ADCx);
+
+	while(!LL_ADC_IsActiveFlag_EOCS(ADCx)){}
+
+	return LL_ADC_REG_ReadConversionData32(ADCx);
+
+}
+
+
+
+
+
+void ADC_IRQ_Init(uint32_t priority)
+{
+	NVIC_SetPriority(ADC_IRQn,priority);
+	NVIC_EnableIRQ(ADC_IRQn);
+}
+
+
+
+
+static void callback(ADC_TypeDef *ADCx)
+{
+	if(!LL_ADC_IsActiveFlag_OVR(ADCx))
+	{
+		LL_ADC_ClearFlag_EOCS(ADCx);
+
+		temp=ADC_Read(ADCx);
+		LL_GPIO_TogglePin(GPIOD,LL_GPIO_PIN_15);
+		for(int itr=0;itr<90000;itr++){}
+	}
+
+
+}
+
+void ADC_IRQnHandler(void)
+{
+	callback(ADC1);
+}

@@ -1,0 +1,115 @@
+
+#include"stm32f4xx_ll_gpio.h"
+#include"stm32f4xx_ll_utils.h"
+#include"stm32f4xx_ll_iwdg.h"
+#include<math.h>
+
+
+
+void IWDG_Init(IWDG_TypeDef * IWDGx,uint32_t Div);
+void IWDG_SetTimeOut(IWDG_TypeDef * IWDGx,int TimeOut);
+void IWDG_Refresh(IWDG_TypeDef * IWDGx);
+
+
+int main(void)
+{
+
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_15,LL_GPIO_MODE_OUTPUT);
+	IWDG_Init(IWDG,LL_IWDG_PRESCALER_4);
+	IWDG_SetTimeOut(IWDG,100);
+	LL_GPIO_SetOutputPin (GPIOD, LL_GPIO_PIN_15);
+
+	while(1)
+	{
+
+		LL_mDelay(50);
+		IWDG_Refresh(IWDG);
+
+
+
+
+	}
+
+
+
+
+}
+
+
+
+
+void IWDG_Init(IWDG_TypeDef * IWDGx,uint32_t Div)
+{
+  LL_IWDG_Enable(IWDGx);
+  LL_IWDG_EnableWriteAccess(IWDGx);
+  LL_IWDG_SetPrescaler(IWDG,Div);
+}
+/*
+static int pow (int x,int y)
+{
+	int power =1 ,i;
+
+	for (i=1;i<=y;i++)
+	{
+		power=power*x;
+	}
+
+	return power;
+}
+*/
+
+
+
+static int GetDiv_Rank(uint32_t DIV)
+{
+	switch(DIV)
+	{
+	case LL_IWDG_PRESCALER_4 :
+		return 0;
+		break;
+
+	case LL_IWDG_PRESCALER_8 :
+		return 1;
+		break;
+	case LL_IWDG_PRESCALER_16 :
+		return 2;
+		break;
+	case LL_IWDG_PRESCALER_32 :
+		return 3;
+		break;
+	case LL_IWDG_PRESCALER_64 :
+		return 4;
+		break;
+	case LL_IWDG_PRESCALER_128 :
+		return 5;
+		break;
+	default :
+		return 6;
+		break;
+
+	}
+}
+
+void IWDG_SetTimeOut(IWDG_TypeDef * IWDGx,int TimeOut)
+{
+
+	LL_IWDG_GetPrescaler (IWDGx);
+
+	LL_IWDG_SetReloadCounter(IWDGx, (TimeOut*32000/(2*1000*pow(2,GetDiv_Rank(LL_IWDG_GetPrescaler(IWDG)))))-1);
+
+}
+
+
+
+void IWDG_Refresh(IWDG_TypeDef * IWDGx)
+{
+
+
+	  while (LL_IWDG_IsReady(IWDGx) != 1)
+	  {
+	  }
+
+	  LL_IWDG_ReloadCounter(IWDGx);
+
+}

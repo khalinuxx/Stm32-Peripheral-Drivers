@@ -1,0 +1,61 @@
+
+#include"WDG.h"
+
+
+void Check_restart_source(void);
+
+int main(void)
+{
+	LL_RCC_ClocksTypeDef RCC_Clock={0};
+	LL_RCC_GetSystemClocksFreq(&RCC_Clock);
+
+
+
+	LL_Init1msTick(RCC_Clock.SYSCLK_Frequency);
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_15,LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_13,LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_14,LL_GPIO_MODE_OUTPUT);
+
+	//IWDG_Init(IWDG,LL_IWDG_PRESCALER_64,499);
+	Check_restart_source();
+	WWDG_Init(WWDG);
+
+   LL_GPIO_SetOutputPin (GPIOD, LL_GPIO_PIN_15);
+
+	while(1)
+	{
+
+		LL_mDelay(15);
+
+		WWDG_Refresh();
+
+
+
+	}
+
+
+
+
+}
+
+
+void Check_restart_source(void)
+{
+	if(LL_RCC_IsActiveFlag_IWDGRST())
+	{
+		LL_RCC_ClearResetFlags();
+
+		LL_GPIO_SetOutputPin (GPIOD, LL_GPIO_PIN_13);
+	}
+	if(LL_RCC_IsActiveFlag_WWDGRST())
+	{
+		LL_RCC_ClearResetFlags();
+
+		LL_GPIO_SetOutputPin (GPIOD, LL_GPIO_PIN_14);
+	}
+
+
+}
+
+

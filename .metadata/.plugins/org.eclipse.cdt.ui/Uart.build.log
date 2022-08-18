@@ -1,0 +1,20 @@
+10:13:25 **** Incremental Build of configuration Debug for project Uart ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/Uart.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32F407xx -DUSE_FULL_LL_DRIVER -c -I"../../../DRIVERS/CMSIS/Device/ST/STM32F4xx/Include" -I"../../../DRIVERS/STM32F4xx_LL_Driver/USART_Drivers/Inc" -I"../../../Stm32-Peripheral-Drivers/Uart Driver/Core/Inc" -I"../../../DRIVERS/CMSIS/Core/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/Uart.d" -MT"Core/Src/Uart.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/Uart.o"
+arm-none-eabi-gcc -o "Uart.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\kalil\Desktop\PFA\STM2\Stm32-Peripheral-Drivers\Stm32-Peripheral-Drivers\Uart Driver\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Uart.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Uart.elf
+ 
+arm-none-eabi-size   Uart.elf 
+arm-none-eabi-objdump -h -S  Uart.elf  > "Uart.list"
+arm-none-eabi-objcopy  -O binary  Uart.elf  "Uart.bin"
+   text	   data	    bss	    dec	    hex	filename
+   9220	    108	   1596	  10924	   2aac	Uart.elf
+Finished building: default.size.stdout
+ 
+Finished building: Uart.bin
+ 
+Finished building: Uart.list
+ 
+
+10:13:44 Build Finished. 0 errors, 0 warnings. (took 18s.408ms)
+

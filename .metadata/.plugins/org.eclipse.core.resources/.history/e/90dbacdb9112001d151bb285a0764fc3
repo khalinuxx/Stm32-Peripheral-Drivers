@@ -1,0 +1,47 @@
+
+/**
+  ******************************************************************************
+  * @file    main.c
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   main file of Reading Values from Temp sensor using ADC Driver .
+  * Created on: 1 Aug. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services, R&D Team.
+  * All rights reserved.
+  ******************************************************************************
+  */
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include"ADC.h"
+
+#define Avg_Slope .0025   // V/C
+#define V25  0.76   // V
+#define VSENSE 3.3/4096  // 12 bit res
+
+uint32_t temp;
+float val ;
+int main()
+{
+
+	LL_AHB1_GRP1_EnableClock( LL_AHB1_GRP1_PERIPH_GPIOA);
+	ADC_GPIO_Init(GPIOA,LL_GPIO_PIN_1);
+	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC1);
+	ADC_Init(ADC1);
+	ADC_REG_Init(ADC1);
+	ADC_Com_Init(ADC1);
+	ADC_Channel_Init(ADC1,LL_ADC_REG_RANK_1,LL_ADC_CHANNEL_TEMPSENSOR);
+	LL_ADC_Enable(ADC1);
+	while(1)
+	{
+		temp=ADC_Read(ADC1);
+		val =  ((VSENSE*temp ) / Avg_Slope) + 25;
+		for(int itr=0;itr<90000;itr++){}
+
+	}
+
+
+
+
+}
+

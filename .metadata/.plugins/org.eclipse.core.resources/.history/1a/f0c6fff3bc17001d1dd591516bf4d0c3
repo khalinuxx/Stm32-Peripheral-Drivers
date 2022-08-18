@@ -1,0 +1,301 @@
+
+/**
+  ******************************************************************************
+  * @file    Gpio.c
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Source file of GPIO LL Driver.
+  * Created on: 15 juil. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services, R&D Team.
+  * All rights reserved.
+  ******************************************************************************
+  */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include "../Inc/Gpio.h"
+
+/**
+  * @brief  Initializes the GPIOx peripheral according to the specified parameters in the LL_GPIO_Init.
+  * @param  GPIOx where x can be (A..K) to select the GPIO peripheral for STM32F429X device or
+  *                      x can be (A..I) to select the GPIO peripheral for STM32F40XX and STM32F427X devices.
+  * @param  Pin specifies the Configured pin
+  * @param  Mode can be INPUT or OUTPUT
+  * @retval None
+  */
+void GPIO_Init(GPIO_TypeDef *GPIOx,  uint32_t Pin,uint32_t Mode)
+{
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+if(Mode==OUTPUT)
+{
+  /*Configure GPIO pin Output Level */
+  LL_GPIO_ResetOutputPin (GPIOx,Pin);
+  GPIO_InitStruct.Mode = Mode;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+}
+if(Mode==INPUT)
+{		 /*Configure GPIO pin input Level */
+
+			  GPIO_InitStruct.Mode = Mode;
+}
+GPIO_InitStruct.Pin = Pin;
+GPIO_InitStruct.Pull = LL_GPIO_PULL_NO ;
+LL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+}
+
+/**
+  * @brief  Sets or clears the selected data port bit.
+  *
+  * @note   This function use the LL pin Set/Reset functions to set or clear the selected pin
+  *
+  * @param  GPIOx where x can be (A..K) to select the GPIO peripheral for STM32F429X device or
+  *                      x can be (A..I) to select the GPIO peripheral for STM32F40XX and STM32F427X devices.
+  * @param   Pin specifies the port bit to be written.
+  *          This parameter can be one of Px where x can be (0..15 or all).
+  * @param  PinState specifies the value to be written to the selected bit.
+  *          This parameter can be one of the LL_GPIO_PinState enum values:
+  *            @arg PIN_RESET: to clear the port pin
+  *            @arg PIN_SET: to set the port pin
+  * @retval None
+  */
+ void GPIO_Write(GPIO_TypeDef  *GPIOx,uint32_t Pin,ll_pinstate_t PinState)
+ {
+	 if(PinState == PIN_RESET)
+	 {
+      LL_GPIO_ResetOutputPin (GPIOx, Pin); /* Reset the port pin */
+	 }
+	 else
+	 {
+	  LL_GPIO_SetOutputPin (GPIOx, Pin); /* Set the port pin */
+	 }
+ }
+
+
+
+ /**
+   * @brief  Reads the specified input port pin.
+   * @param  GPIOx where x can be (A..K) to select the GPIO peripheral for STM32F429X device or
+   *                      x can be (A..I) to select the GPIO peripheral for STM32F40XX and STM32F427X devices.
+   * @param  GPIO_Pin specifies the port bit to read.
+   *         This parameter can be Px where x can be (0..15 or all).
+   * @retval The input port pin value.
+   */
+ ll_pinstate_t GPIO_Read(GPIO_TypeDef  *GPIOx,uint32_t GPIO_Pin){
+
+	if(LL_GPIO_IsInputPinSet(GPIOx,GPIO_Pin))
+	{
+	  return PIN_SET;
+	}
+	else
+	{
+	  return PIN_RESET;
+	}
+ }
+
+ /*------------------------------------------------------GPIO Interrupt Section------------------------------------------------------------------*/
+
+
+ /*1. Enable The Input Pin GPIO Clock */
+ /*2. Initialize The Pin As INPUT */
+ /*3. Call EXTI_Line_Init Function To configures The NVIC and the input source for EXTI line */
+ /*4. Paste The EXTI_callback and The Specific Handler Function After The Main Function */
+ /*5. Write The Interrupt Actions In The EXIT_callback Function */
+
+static uint32_t Get_SysLN(uint32_t InPin)
+ {
+ 	switch(InPin)
+ 	{
+ 	case (LL_GPIO_PIN_0):
+ 			return LL_SYSCFG_EXTI_LINE0;
+ 		break;
+ 	case (LL_GPIO_PIN_1):
+ 			return LL_SYSCFG_EXTI_LINE1;
+ 		break;
+ 	case (LL_GPIO_PIN_2):
+ 			return LL_SYSCFG_EXTI_LINE2;
+ 		break;
+ 	case (LL_GPIO_PIN_3):
+ 			return LL_SYSCFG_EXTI_LINE3;
+ 		break;
+ 	case (LL_GPIO_PIN_4):
+ 			return LL_SYSCFG_EXTI_LINE4;
+ 		break;
+ 	case (LL_GPIO_PIN_5):
+ 			return LL_SYSCFG_EXTI_LINE5;
+ 		break;
+ 	case (LL_GPIO_PIN_6):
+ 			return LL_SYSCFG_EXTI_LINE6;
+ 		break;
+ 	case (LL_GPIO_PIN_7):
+ 			return LL_SYSCFG_EXTI_LINE7;
+ 		break;
+ 	case (LL_GPIO_PIN_8):
+ 			return LL_SYSCFG_EXTI_LINE8;
+ 		break;
+ 	case (LL_GPIO_PIN_9):
+ 			return LL_SYSCFG_EXTI_LINE9;
+ 		break;
+ 	case (LL_GPIO_PIN_10):
+ 			return LL_SYSCFG_EXTI_LINE10;
+ 		break;
+ 	case (LL_GPIO_PIN_11):
+ 			return LL_SYSCFG_EXTI_LINE11;
+ 		break;
+ 	case (LL_GPIO_PIN_12):
+ 			return LL_SYSCFG_EXTI_LINE12;
+ 		break;
+ 	case (LL_GPIO_PIN_13):
+ 			return LL_SYSCFG_EXTI_LINE13;
+ 		break;
+ 	case (LL_GPIO_PIN_14):
+ 			return LL_SYSCFG_EXTI_LINE14;
+ 		break;
+ 	case (LL_GPIO_PIN_15):
+ 			return LL_SYSCFG_EXTI_LINE15;
+ 		break;
+ 	}
+ }
+
+
+ static IRQn_Type Get_IRQn(uint32_t InPin)
+ {
+ 	switch(InPin)
+ 	{
+ 	case(LL_GPIO_PIN_0) :
+ 			return EXTI0_IRQn;
+ 		break;
+ 	case(LL_GPIO_PIN_1) :
+ 			return EXTI1_IRQn;
+ 		break;
+ 	case(LL_GPIO_PIN_2) :
+ 			return EXTI2_IRQn;
+ 		break;
+ 	case(LL_GPIO_PIN_3) :
+ 			return EXTI3_IRQn;
+ 		break;
+ 	case(LL_GPIO_PIN_4) :
+ 			return EXTI4_IRQn;
+ 		break;
+ 	case (LL_GPIO_PIN_5):
+ 		return EXTI9_5_IRQn;
+ 	    break;
+ 	case (LL_GPIO_PIN_6):
+ 		return EXTI9_5_IRQn;
+ 	    break;
+ 	case (LL_GPIO_PIN_7):
+ 		return EXTI9_5_IRQn;
+ 	    break;
+ 	case (LL_GPIO_PIN_8):
+ 		return EXTI9_5_IRQn;
+ 	    break;
+ 	case (LL_GPIO_PIN_9):
+ 		return EXTI9_5_IRQn;
+ 	    break;
+ 	case (LL_GPIO_PIN_10) :
+ 		return EXTI15_10_IRQn;
+ 	    break;
+ 	case (LL_GPIO_PIN_11) :
+ 		return EXTI15_10_IRQn;
+ 	   break;
+ 	case (LL_GPIO_PIN_12) :
+ 		return EXTI15_10_IRQn;
+ 	    break;
+ 	case (LL_GPIO_PIN_13) :
+ 		return EXTI15_10_IRQn;
+ 	    break;
+ 	case (LL_GPIO_PIN_14) :
+ 		return EXTI15_10_IRQn;
+ 	    break;
+ 	case (LL_GPIO_PIN_15) :
+ 		return EXTI15_10_IRQn;
+ 	    break;
+ 	}
+ }
+
+ /**
+   * @brief  Initialize EXTI interrupt Line and NVIC.
+   * @param  Port This parameter can be one of the following values:
+   *         @arg @ref LL_SYSCFG_EXTI_PORTA
+   *         @arg @ref LL_SYSCFG_EXTI_PORTB
+   *         @arg @ref LL_SYSCFG_EXTI_PORTC
+   *         @arg @ref LL_SYSCFG_EXTI_PORTD
+   *         @arg @ref LL_SYSCFG_EXTI_PORTE
+   *         @arg @ref LL_SYSCFG_EXTI_PORTF (*)
+   *         @arg @ref LL_SYSCFG_EXTI_PORTG (*)
+   *         @arg @ref LL_SYSCFG_EXTI_PORTH
+   * @param  InPin specifies the Line refer to the INPUT Pin
+   * @param  priority  Interrupt Priority to set
+   * @Note   The priority cannot be set for every processor exception
+ */
+ void EXTI_Line_Init(uint32_t Port,uint32_t InPin,uint32_t priority)
+ {
+
+
+ 	/*LL_EXTI_LINE_0=LL_GPIO_PIN_0 ****
+ 	 *     ........ = .........
+ 	 *  .........................
+ 	 * LL_EXTI_LINE_15=LL_GPIO_PIN_15
+ 	 */
+
+ 	LL_APB2_GRP1_EnableClock (LL_APB2_GRP1_PERIPH_SYSCFG);
+ 	LL_SYSCFG_SetEXTISource(Port, Get_SysLN(InPin));
+ 	LL_EXTI_EnableIT_0_31 (InPin);
+ 	LL_EXTI_EnableFallingTrig_0_31(InPin);
+ 	NVIC_EnableIRQ(Get_IRQn(InPin));
+ 	NVIC_SetPriority(Get_IRQn(InPin),priority);
+ }
+
+
+ /* @brief This Function Handel the Interrupt Action
+  * @param InPin  The INPUT Pin refer to The EXTI Line
+  */
+ /*
+ void EXTI_callback(uint32_t InPin)
+ {
+
+ 	if (LL_EXTI_IsActiveFlag_0_31(InPin)!= RESET)
+ 	{
+ 		//Interrupt Actions Begin
+
+
+ 		LL_GPIO_TogglePin(GPIOD,LL_GPIO_PIN_13);
+ 		LL_GPIO_TogglePin(GPIOD,LL_GPIO_PIN_14);
+
+
+
+         //Interrupt Actions End
+
+ 		LL_EXTI_ClearFlag_0_31(InPin);
+ 	}
+
+ }
+
+
+ */
+
+
+ /* @brief This is The Interrupt Handler Function
+  * @EXTI IRQ Handlers
+  *        void EXTI0_IRQHandler(void), line EXTI0 ,PIN0
+  *        void EXTI1_IRQHandler(void), line EXTI1 ,PIN1
+  *        void EXTI2_IRQHandler(void), line EXTI2 ,PIN2
+  *        void EXTI3_IRQHandler(void), line EXTI3 ,PIN3
+  *        void EXTI4_IRQHandler(void), line EXTI4 ,PIN4
+  *        void EXTI9_5_IRQHandler(void), lines EXTI5 to EXTI9 ,PIN5 to PIN9
+  *        void EXTI15_10_IRQHandler(void), lines EXTI10 to EXTI15 ,PIN10 to PIN15
+  * @Note To use This Handler Just Copy EXTI_callback and EXTI0_IRQHandler Functions After The Main function Without Calling Them
+  */
+ /*
+ void EXTI0_IRQHandler(void)
+ {
+ 	EXTI_callback(LL_GPIO_PIN_0);
+ }
+
+ */
+
+
+
+

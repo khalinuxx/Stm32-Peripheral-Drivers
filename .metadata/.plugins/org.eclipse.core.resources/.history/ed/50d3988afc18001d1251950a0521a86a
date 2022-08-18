@@ -1,0 +1,113 @@
+
+
+
+void SPI_GPIO_Init(GPIOx_Typedef * GPIOx,uint32_t Pin,uint32_t Alternate);
+void SPI_NVIC_Init(IRQn_Type IRQ);
+void SPI_Master_Init(SPIx_TypeDef *SPIx);
+void SPI_Slave_Init(SPIx_TypeDef *SPIx);
+int main()
+{
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+    SPI_GPIO_Init(GPIOA,LL_GPIO_PIN_5,LL_GPIO_AF_5);
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI1);
+    SPI_NVIC_Init(SPI1_IRQn);
+    SPI_Master_Init(SPI1);
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI2);
+    SPI_NVIC_Init(SPI2_IRQn);
+    SPI_Slave_Init(SPI2);
+
+	while()
+	{
+
+
+
+
+
+	}
+
+
+
+
+}
+
+
+
+
+void SPI_GPIO_Init(GPIOx_TypeDef * GPIOx,uint32_t Pin,uint32_t Alternate)
+{
+
+	  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+	  GPIO_InitStruct.Pin = Pin;
+	  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+	  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
+	  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+	  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+	  GPIO_InitStruct.Alternate = Alternate;
+	  LL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+
+}
+
+void SPI_Master_Init(SPIx_TypeDef *SPIx)
+{
+
+
+
+	  NVIC_SetPriority(SPI1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+	  NVIC_EnableIRQ(SPI1_IRQn);
+
+	  LL_SPI_InitTypeDef SPI_InitStruct = {0};
+
+	  SPI_InitStruct.TransferDirection = LL_SPI_HALF_DUPLEX_TX;
+	  SPI_InitStruct.Mode = LL_SPI_MODE_MASTER;
+	  SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_8BIT;
+	  SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
+	  SPI_InitStruct.ClockPhase = LL_SPI_PHASE_2EDGE;
+	  SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
+	  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV256;
+	  SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
+	  SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
+	  SPI_InitStruct.CRCPoly = 10;
+	  LL_SPI_Init(SPIx, &SPI_InitStruct);
+	  LL_SPI_EnableIT_TXE(SPIx);
+	  LL_I2S_EnableIT_ERR(SPIx);
+
+
+}
+
+void SPI_NVIC_Init(IRQn_Type IRQ)
+{
+	  NVIC_SetPriority(IRQ, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+	  NVIC_EnableIRQ(IRQ);
+}
+
+
+void SPI_Slave_Init(SPIx_TypeDef *SPIx)
+{
+
+	  LL_SPI_InitTypeDef SPI_InitStruct = {0};
+
+	  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SPI1);
+
+	  SPI_InitStruct.TransferDirection = LL_SPI_HALF_DUPLEX_RX;
+	  SPI_InitStruct.Mode = LL_SPI_MODE_SLAVE;
+	  SPI_InitStruct.DataWidth = LL_SPI_DATAWIDTH_8BIT;
+	  SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_LOW;
+	  SPI_InitStruct.ClockPhase = LL_SPI_PHASE_2EDGE;
+	  SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
+	  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV256;
+	  SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
+	  SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
+	  SPI_InitStruct.CRCPoly = 10;
+	  LL_SPI_Init(SPIx, &SPI_InitStruct);
+	  LL_SPI_EnableIT_TXE(SPIx);
+	  LL_I2S_EnableIT_ERR(SPIx);
+
+
+}
+
+void SPI_Enable(SPIx_TypeDef *SPIx)
+{
+
+	LL_SPI_Enable(SPIx);
+
+}

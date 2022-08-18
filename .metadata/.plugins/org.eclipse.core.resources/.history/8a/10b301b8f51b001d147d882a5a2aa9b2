@@ -1,0 +1,106 @@
+#include"stm32f4xx_ll_rcc.h"
+#include"stm32f4xx_ll_bus.h"
+#include"stm32f4xx_ll_gpio.h"
+#include"stm32f4xx_ll_utils.h"
+#include"stm32f4xx_ll_iwdg.h"
+#include"stm32f4xx_ll_wwdg.h"
+#include<math.h>
+
+
+void Check_restart_source(void);
+void IWDG_Init(IWDG_TypeDef * IWDGx,uint32_t Div,uint32_t Counter)
+void IWDG_SetTimeOut(IWDG_TypeDef * IWDGx,int TimeOut);
+void IWDG_Refresh(void);
+int GetDiv_Rank(uint32_t DIV);
+
+
+void WWDG_Init(WWDG_TypeDef * WWDGx);
+
+
+int main(void)
+{
+	LL_RCC_ClocksTypeDef RCC_Clock={0};
+	LL_RCC_GetSystemClocksFreq(&RCC_Clock);
+//	uint32_t x;
+
+
+	LL_Init1msTick(RCC_Clock.SYSCLK_Frequency);
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_15,LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOD,LL_GPIO_PIN_13,LL_GPIO_MODE_OUTPUT);
+
+	IWDG_Init(IWDG,LL_IWDG_PRESCALER_64);
+	Check_restart_source();
+  // Reaload = (32000/(4*pow(2,D)))-1 ;
+
+   LL_GPIO_SetOutputPin (GPIOD, LL_GPIO_PIN_15);
+
+	while(1)
+	{
+
+		LL_mDelay(1100);
+
+		LL_IWDG_ReloadCounter(IWDG);
+
+
+
+	}
+
+
+
+
+}
+
+
+
+
+void IWDG_Init(IWDG_TypeDef * IWDGx,uint32_t Div,uint32_t Counter)
+{
+  LL_IWDG_Enable(IWDGx);
+  LL_IWDG_EnableWriteAccess(IWDGx);
+  LL_IWDG_SetPrescaler(IWDGx,Div);
+	LL_IWDG_SetReloadCounter(IWDGx,Counter);
+
+	while (LL_IWDG_IsReady(IWDGx) != 1)
+	  {
+	  }
+
+	  LL_IWDG_ReloadCounter(IWDGx);
+}
+
+
+
+void WWDG_Init(WWDG_TypeDef * WWDGx)
+{
+LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_WWDG);
+
+
+LL_WWDG_SetCounter(WWDG, 64);
+LL_WWDG_Enable(WWDG);
+LL_WWDG_SetPrescaler(WWDG, LL_WWDG_PRESCALER_1);
+LL_WWDG_SetWindow(WWDG, 64);
+
+}
+
+
+
+
+void IWDG_Refresh(void)
+{
+	  LL_IWDG_ReloadCounter(IWDG);
+}
+
+void Check_restart_source(void)
+{
+	if(LL_RCC_IsActiveFlag_IWDGRST())
+	{
+		LL_RCC_ClearResetFlags();
+
+		LL_GPIO_SetOutputPin (GPIOD, LL_GPIO_PIN_13);
+
+
+	}
+
+
+
+}

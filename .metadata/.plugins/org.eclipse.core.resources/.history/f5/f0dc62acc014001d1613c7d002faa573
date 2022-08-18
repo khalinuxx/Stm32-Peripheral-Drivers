@@ -1,0 +1,52 @@
+
+/**
+  ******************************************************************************
+  * @file    main.c
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Source file of main
+  *  Created on: 20 juil. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services.
+  * All rights reserved.
+  *
+  * This software is placed in the public domain and may be used for any purpose
+  * You can find this code on https://github.com/mouadhgit/Stm32-Peripheral-Drivers
+  ******************************************************************************
+  */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include "../Inc/Uart.h"
+
+
+#define USART_x USART2 /* change the specific USART from this line and check macros in Uart.h */
+
+
+char rcv;
+int main(){
+
+	UART2_UART_Init();                       /* uart instialization */
+
+  while(1){
+
+	         //printf("Hello world"); /* To Transmit a string uncomment This line  */
+	        //   uart_write('y');       /* Function to Transmit one character */
+
+	           for(int itr=0 ; itr<900000;itr++){}
+
+
+
+
+
+           }
+
+
+}
+
+
+
+
+
+
+

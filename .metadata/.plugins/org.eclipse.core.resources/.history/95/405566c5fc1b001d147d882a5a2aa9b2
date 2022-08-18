@@ -1,0 +1,26 @@
+
+#ifndef WDG_H_
+#define WDG_H_
+#include"stm32f4xx_ll_rcc.h"
+#include"stm32f4xx_ll_bus.h"
+#include"stm32f4xx_ll_gpio.h"
+#include"stm32f4xx_ll_utils.h"
+#include"stm32f4xx_ll_iwdg.h"
+#include"stm32f4xx_ll_wwdg.h"
+
+
+
+
+
+
+
+
+void IWDG_Init(IWDG_TypeDef * IWDGx,uint32_t Div,uint32_t Counter);
+void IWDG_Refresh(void);
+void WWDG_Init(WWDG_TypeDef * WWDGx);
+
+
+
+
+
+#endif /* WDG_H_ */

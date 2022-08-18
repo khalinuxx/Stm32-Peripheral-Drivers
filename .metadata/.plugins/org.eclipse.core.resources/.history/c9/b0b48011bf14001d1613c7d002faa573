@@ -1,0 +1,97 @@
+
+/**
+  ******************************************************************************
+  * @file    Uart.c
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Source file of Uart LL Driver.
+  *  Created on: 20 juil. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services.
+  * All rights reserved.
+  *
+  * This software is placed in the public domain and may be used for any purpose
+  * You can find this code on https://github.com/mouadhgit/Stm32-Peripheral-Drivers
+  ******************************************************************************
+  */
+/* Define to prevent recursive inclusion -------------------------------------*/
+#include "../Inc/Uart.h"
+/*------------------------ macros --------------------------------------*/
+#define USART_x USART2
+/*------------------------ Structures --------------------------------------*/
+
+/*---------------------------------------------USARTx Initialization Function---------------------------------------------------------*/
+void UART2_UART_Init(void)
+	{
+
+
+
+	 // LL_USART_InitTypeDef USART_InitStruct = {0};
+
+	  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+/*----------------------------- Peripheral clock enable -----------------------*/
+	  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
+
+	  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
+	  /**USARTx GPIO Configuration
+	  PA2   ------> USARTx_TX
+	  PA3   ------> USARTx_RX
+	  */
+	  GPIO_InitStruct.Pin = LL_GPIO_PIN_2;
+	  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+	  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
+	  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+	  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+	  GPIO_InitStruct.Alternate = LL_GPIO_AF_7;
+	  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+/*------------------------------- UART Configuration ---------------------------- */
+	  //USART_InitStruct.BaudRate = 9600;
+
+	  /*USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_8B;
+	  USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
+	  USART_InitStruct.Parity = LL_USART_PARITY_NONE;
+	  USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
+	  USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
+	  USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
+	  LL_USART_Init(USART_x, &USART_InitStruct);*/
+
+		LL_RCC_ClocksTypeDef RCC_Clock={0};
+		LL_RCC_GetSystemClocksFreq(&RCC_Clock);
+
+	  LL_USART_Disable(USART2);
+	  LL_USART_SetTransferDirection(USART2,LL_USART_DIRECTION_TX);
+	  LL_USART_ConfigCharacter(USART2,LL_USART_DATAWIDTH_8B,LL_USART_PARITY_NONE,LL_USART_STOPBITS_1);
+	  LL_USART_SetBaudRate(USART2,RCC_Clock.SYSCLK_Frequency,LL_USART_OVERSAMPLING_16,9600);
+	  //LL_USART_ConfigAsyncMode(USART_x);    /* Perform basic configuration of USART for enabling use in Asynchronous Mode (UART) */
+	//LL_USART_ConfigSyncMode (USART_x);    /* if u want to use USARTx in Synchronous Mode Uncomment this line and delete the LL_USART_ConfigAsyncMode function */
+	  LL_USART_Enable(USART2);             /* USARTx Must be enabled before using the LL_USART_Init function */
+
+
+	}
+
+/*---------------------------------------- Function to Transmit one character -----------------------------------------------------*/
+void uart_write(int ch)
+{
+	while (!LL_USART_IsActiveFlag_TXE (USART_x)){}  /* Check if the USART Transmit Data Register Empty Flag is set or not */
+	LL_USART_TransmitData8(USART2,ch);             /* Write in Transmitter Data Register (Transmit Data value, 8 bits) */
+
+
+}
+
+
+/*---------------------------------------- Function to receiver one character -----------------------------------------------------*/
+char uart_read()
+{
+
+	while (!LL_USART_IsActiveFlag_RXNE(USART_x)){}  /* Check if the USART Transmit Data Register Empty Flag is set or not */
+	 return LL_USART_ReceiveData8(USART_x);         /* Write in Receiver Data Register (Transmit Data value, 8 bits) */
+}
+
+int __io_putchar(int ch)
+{
+	uart_write(ch);
+	return ch;
+}

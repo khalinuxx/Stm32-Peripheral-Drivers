@@ -1,0 +1,60 @@
+
+/**
+  ******************************************************************************
+  * @file    Timer.h
+  * @author  Khalil Mansouri & Mouadh Dahech
+  * @brief   Header file of Delay LL Driver.
+  * Created on: 26 juil. 2022
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright NOTICE: (c) 2022 ACTIA Engineering Services, R&D Team.
+  * All rights reserved.
+  ******************************************************************************
+  */
+
+
+
+#ifndef TDELAY_H_
+#define TDELAY_H_
+
+
+#include "stm32f4xx_ll_bus.h"
+#include "stm32f4xx_ll_gpio.h"
+#include "stm32f4xx_ll_tim.h"
+#include "stm32f4xx_ll_rcc.h"
+
+
+
+/* Don't forget to Enable GPIO clock before the next Function */
+void TIM_GPIO_Init(GPIO_TypeDef *GPIOx,uint32_t Pin,uint32_t Alternate);
+
+/*------------------------------------Delay Functions----------------------------------------------*/
+/* Don't forget to Enable TIMER clock before the next Function */
+void TDelay_Init (TIM_TypeDef *TIMx);
+void uDelay(uint16_t us,TIM_TypeDef *TIMx);
+void TDelay(uint16_t ms , TIM_TypeDef *TIMx);
+
+
+/*------------------------------------INPUT/OUTPUT COMPARE Functions-------------------------------------*/
+/* Don't forget to Enable TIMER clock before the next Function */
+void TIM_OC_Init (TIM_TypeDef *TIMx);
+void TIM_OC_CHANNEL_Init(TIM_TypeDef *TIMx, uint32_t Channel);
+
+
+/*------------------------------------INPUT Capture Functions-------------------------------------*/
+/* Don't forget to Enable TIMER clock before the next Function */
+void TIM_IC_Init(TIM_TypeDef *TIMx,int TIM_freq);
+void TIM_IC_CHANNEL_Init(TIM_TypeDef *TIMx, uint32_t Channel);
+uint32_t TIM_IC_GetCap(TIM_TypeDef *TIMx,uint32_t Channel);
+
+
+/*------------------------------------PWM Functions------------------------------------------------*/
+/* Don't forget to Enable TIMER clock before the next Function */
+void TIM_PWM_Init(TIM_TypeDef *TIMx);
+void TIM_PWM_Channel_Init(TIM_TypeDef *TIMx, uint32_t Channel);
+/* Don't forget to use LL_TIM_GPIO_Init to initialize the GPIO Pin */
+void TIM_PWM_SetDuty(TIM_TypeDef *TIMx,uint32_t Channel,int Duty);
+void TIM_PWM_SetFreq(TIM_TypeDef *TIMx,int pwmF);
+
+#endif /* TDELAY_H_ */
