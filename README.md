@@ -44,8 +44,9 @@ To use the drivers in your project you need to:
 ---
 ## Divers
 This project contain :
-- Gpio Driver
-- Uart Driver
+- Gpio  Driver
+- Uart  Driver
 - Timer Driver
-- WDG Driver
+- ADC   Driver
+- WDG   Driver
 
